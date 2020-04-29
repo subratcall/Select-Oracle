@@ -14,7 +14,7 @@
                                     <label for="tabel" class="col-sm-2 col-form-label">Tabel</label>
                                     <div class="col-sm-4">
                                         <select type="text" class="form-control" id="tabel">
-                                            <option selected disabled>- Pilih Tabel -</option>
+                                            <option value="" selected disabled>- Pilih Tabel -</option>
                                             @foreach($tablelist as $t)
                                             <option value="{{ $t->table_name }}">{{ strtoupper($t->table_name) }}</option>
                                             @endforeach
@@ -25,7 +25,7 @@
                                     <label for="tipe" class="col-sm-2 col-form-label">Tipe</label>
                                     <div class="col-sm-4">
                                         <select type="text" class="form-control" id="tipe">
-                                            <option selected disabled>- Pilih tipe query -</option>
+                                            <option value=""selected disabled>- Pilih tipe query -</option>
                                             <option value="select">SELECT</option>
                                             <option value="insert">INSERT</option>
                                             <option value="update">UPDATE</option>
@@ -41,7 +41,7 @@
                                         <label for="tabel" class="col-sm-2 col-form-label">Select</label>
                                         <div class="col-sm-4">
                                             <select type="text" class="form-control column select" onchange="column_onchange(event)">
-                                                <option selected disabled>- Pilih Tabel terlebih dahulu -</option>
+                                                <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-1">
@@ -54,7 +54,7 @@
                                         <label for="tabel" class="col-sm-2 col-form-label">Where</label>
                                         <div class="col-sm-4">
                                             <select type="text" class="form-control column where" onchange="column_onchange(event)">
-                                                <option selected disabled>- Pilih Tabel terlebih dahulu -</option>
+                                                <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-1">
@@ -73,7 +73,7 @@
                                         <label for="tabel" class="col-sm-2 col-form-label">Group By</label>
                                         <div class="col-sm-4">
                                             <select type="text" class="form-control column group" onchange="column_onchange(event)">
-                                                <option selected disabled>- Pilih Tabel terlebih dahulu -</option>
+                                                <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-1">
@@ -86,7 +86,7 @@
                                         <label for="tabel" class="col-sm-2 col-form-label">Order By</label>
                                         <div class="col-sm-4">
                                             <select type="text" class="form-control column order">
-                                                <option selected disabled>- Pilih Tabel terlebih dahulu -</option>
+                                                <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-2">
@@ -105,7 +105,7 @@
                                         <label for="tabel" class="col-sm-2 col-form-label">Set</label>
                                         <div class="col-sm-4">
                                             <select type="text" class="form-control column update" onchange="column_onchange(event)">
-                                                <option selected disabled>- Pilih Tabel terlebih dahulu -</option>
+                                                <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-4">
@@ -132,7 +132,7 @@
                     <legend  class="w-auto ml-5">Query Result</legend>
                     <div class="card-body shadow-lg cardForm">
                         <div class="row text-right">
-                            <div class="col-sm-12">
+                            <div class="col-sm-12 table-wrapper-scroll-y my-custom-scrollbar scroll-y">
                                 <table id="table-result" class="table table-sm table-bordered mb-3">
                                     <thead id="result-header">
                                     </thead>
@@ -171,6 +171,10 @@
             margin: 0;
         }
 
+        input{
+            text-transform: uppercase;
+        }
+
         .row_divisi:hover{
             cursor: pointer;
             background-color: grey;
@@ -178,6 +182,16 @@
 
         textarea{
             height: 300px !important;
+        }
+
+        .my-custom-scrollbar {
+            position: relative;
+            height: 564px;
+            overflow-x: auto;
+        }
+
+        .table-wrapper-scroll-y {
+            display: block;
         }
 
 
@@ -236,6 +250,15 @@
                 $('#order').hide();
                 $('#field-result').hide();
             }
+            else{
+                $('#where').hide();
+                $('#update').hide();
+                $('#insert').hide();
+                $('#select').hide();
+                $('#group').hide();
+                $('#order').hide();
+                $('#field-result').hide();
+            }
         });
 
         $('#tabel').on('change',function(){
@@ -257,7 +280,7 @@
                     $('.column').append("<option value='*' selected>* - SEMUA</option>");
 
                     $('#update').find('option').remove();
-                    $('#update').find('.column').append("<option disabled selected>- Pilih kolom -</option>");
+                    $('#update').find('.column').append('<option value="" disabled selected>- Pilih kolom -</option>');
 
                     columnlist = [];
 
@@ -273,6 +296,7 @@
                                 '<div class="col-sm-4">' +
                                     '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'">' +
                                 '</div>' +
+                                '<label for="tabel" class="col-sm col-form-label text-left">('+ response[i].data_type +')</label>' +
                             '</div>'
                         );
 
@@ -303,7 +327,7 @@
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column select" onchange="column_onchange(event)">' +
-                '<option selected disabled>- Pilih kolom -</option>';
+                '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
                 html += "<option value='" + columnlist[i] + "'>" + columnlist[i] + "</option>";
@@ -324,7 +348,7 @@
                     '<div class="col-sm-2"></div>' +
                     '<div class="col-sm-4">' +
                         '<select type="text" class="form-control column where" onchange="column_onchange(event)">' +
-                            '<option selected disabled>- Pilih kolom -</option>';
+                            '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
                 html += "<option value='" + columnlist[i] + "'>" + columnlist[i] + "</option>";
@@ -351,7 +375,7 @@
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column group" onchange="column_onchange(event)">' +
-                '<option selected disabled>- Pilih kolom -</option>';
+                '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
                 html += "<option value='"+columnlist[i] + "'>" + columnlist[i] + "</option>";
@@ -372,7 +396,7 @@
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column order" onchange="column_onchange(event)">' +
-                '<option selected disabled>- Pilih kolom -</option>';
+                '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
                 html += "<option value='"+columnlist[i] + "'>" + columnlist[i] + "</option>";
@@ -399,7 +423,7 @@
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column update" onchange="column_onchange(event)">' +
-                '<option selected disabled>- Pilih kolom -</option>';
+                '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
                 html += "<option value='"+columnlist[i] + "'>" + columnlist[i] + "</option>";
@@ -420,6 +444,18 @@
 
         function delete_row(event){
             $(event.target).parent().parent().remove();
+        }
+
+        function initial(){
+            $('input').val('');
+            $('select').val('');
+            $('#where').hide();
+            $('#update').hide();
+            $('#insert').hide();
+            $('#select').hide();
+            $('#group').hide();
+            $('#order').hide();
+            $('#field-result').hide();
         }
 
         $('#btn-execute').on('click',function(){
@@ -512,7 +548,7 @@
                         $('.insert-column').each(function(){
                             if($(this).val() != ''){
                                 query += $(this).attr('id') + ', ';
-                                values += "'" + $(this).val() + "', ";
+                                values += "'" + $(this).val().toUpperCase() + "', ";
                             }
                         });
 
@@ -524,7 +560,7 @@
 
                         $('.update-row').each(function(){
                             if($(this).find('.update').val() != '' && $(this).find('.value').val() != ''){
-                                query += $(this).find('.update').val() + " = '" + $(this).find('.value').val() + "', ";
+                                query += $(this).find('.update').val() + " = '" + $(this).find('.value').val().toUpperCase() + "', ";
                             }
                         });
                         query = query.slice(0,-2);
@@ -615,14 +651,20 @@
                                     title: 'Query berhasil dijalankan!',
                                     text: response.message,
                                     icon: response.status
-                                })
+                                }).then(function(ok){
+                                    if(ok && tipe != 'select')
+                                        initial();
+                                });
                             }
                             else{
                                 swal({
                                     title: 'Query gagal dijalankan!',
                                     text: response.message,
                                     icon: response.status
-                                })
+                                }).then(function(ok){
+                                    if(ok && tipe != 'select')
+                                        initial();
+                                });
                             }
                         }
                     });

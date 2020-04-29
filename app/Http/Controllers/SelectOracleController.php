@@ -115,7 +115,7 @@ class SelectOracleController extends Controller
             $q1 = "SELECT table_name FROM information_schema.tables WHERE table_schema='".$_SESSION['connection']."' AND table_type='BASE TABLE'";
         }
         else{
-            $q1 = "SELECT table_name FROM all_tables;";
+            $q1 = "SELECT DISTINCT table_name FROM all_tables;";
         }
 
         $tablelist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($q1));
@@ -126,10 +126,21 @@ class SelectOracleController extends Controller
     public function getColumnList(Request $request){
         session_start();
         if($_SESSION['database'] == 'postgre'){
-            $query = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$request->table."'";
+            $query = "SELECT column_name,
+                        case
+                            when data_type='character varying' THEN 'varchar('||character_maximum_length||')'
+                            when data_type='character' THEN 'varchar('||character_maximum_length||')'
+                            else data_type
+                        end as data_type
+                    FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$request->table."'";
         }
         else{
-            $query = "SELECT column_name FROM USER_TAB_COLUMNS WHERE table_name = '".$request->table."'";
+            $query = "SELECT column_name,
+                        case
+                            when data_type='VARCHAR2' THEN 'VARCHAR2('||data_length||')'
+                            else data_type
+                        end as data_type
+                        FROM USER_TAB_COLUMNS WHERE table_name = '".$request->table."'";
         }
 
         $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
@@ -184,29 +195,31 @@ class SelectOracleController extends Controller
                 $result = DB::CONNECTION($_SESSION['connection'])->DELETE($query);
             }
 
-            if($_SESSION['database'] == 'postgre'){
-                DB::CONNECTION($_SESSION['connection'])
-                    ->table('log')
-                    ->insert([
-                        'log_table' => strtoupper($table),
-                        'log_query' => $query,
-                        'log_where' => $where,
-                        'log_date' => DB::RAW("NOW()"),
-                        'log_user' => $user,
-                        'log_kodeigr' => $_SESSION['kodeigr']
-                    ]);
-            }
-            else{
-                DB::CONNECTION($_SESSION['connection'])
-                    ->table('log')
-                    ->insert([
-                        'log_table' => strtoupper($table),
-                        'log_query' => $query,
-                        'log_where' => $where,
-                        'log_date' => DB::RAW("SYSDATE"),
-                        'log_user' => $user,
-                        'log_kodeigr' => $_SESSION['kodeigr']
-                    ]);
+            if(strtolower($tipe) != 'select'){
+                if($_SESSION['database'] == 'postgre'){
+                    DB::CONNECTION($_SESSION['connection'])
+                        ->table('log')
+                        ->insert([
+                            'log_table' => strtoupper($table),
+                            'log_query' => $query,
+                            'log_where' => $where,
+                            'log_date' => DB::RAW("NOW()"),
+                            'log_user' => $user,
+                            'log_kodeigr' => $_SESSION['kodeigr']
+                        ]);
+                }
+                else{
+                    DB::CONNECTION($_SESSION['connection'])
+                        ->table('log')
+                        ->insert([
+                            'log_table' => strtoupper($table),
+                            'log_query' => $query,
+                            'log_where' => $where,
+                            'log_date' => DB::RAW("SYSDATE"),
+                            'log_user' => $user,
+                            'log_kodeigr' => $_SESSION['kodeigr']
+                        ]);
+                }
             }
         }
         catch(QueryException $e){
@@ -227,12 +240,15 @@ class SelectOracleController extends Controller
             }
 
             $status = 'success';
-            if($result > 1){
-                if(strtolower($tipe) == 'select')
-                    $message = count($result).' rows affected';
-                else $message = $result.' rows affected';
+            if(strtolower($tipe) != 'select'){
+                if($result > 0){
+                    $message = 'Ada data yang terupdate!';
+                }
+                else $message = 'Tidak ada data yang terupdate!';
             }
-            else $message = $result.' row affected';
+            else{
+                $message = 'Ditemukan '.count($result).' data!';
+            }
 
             return compact(['status','message','result']);
         }
