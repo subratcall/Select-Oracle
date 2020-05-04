@@ -63,9 +63,8 @@
             <div class="wrap-input100 validate-input ">
                 <select class="input100" id="cabang" data-validate="user" style="text-transform: uppercase;" required>
                     <option selected disabled>- PILIH CABANG -</option>
-                    <option value="00">00 - DEFAULT</option>
+                    <option value="00">00 - DEFAULT (POSTGRE)</option>
                     <option value="22">22 - SEMARANG</option>
-                    <option value="34">34 - CIPUTAT</option>
                 </select>
                 <span class="focus-input100"></span>
             </div>
@@ -138,8 +137,12 @@
                     $('#modal-loader').modal({backdrop: 'static', keyboard: false});
                 },
                 success: function (response) {
-                    if(response == 'success')
+                    if(response == 'success'){
                         location.href = "{{ url('select-oracle/index') }}";
+                    }
+                    else if(response == 'generate'){
+                        location.href = "{{ url('select-oracle/generate') }}";
+                    }
                     else{
                         $('#modal-loader').modal('hide');
                         swal({
