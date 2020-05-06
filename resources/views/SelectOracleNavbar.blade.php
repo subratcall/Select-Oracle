@@ -9,8 +9,8 @@
     <!-- CSS -->
     {{--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">--}}
     <link href={{ asset('css/bootstrap.min.css') }} rel="stylesheet">
-{{--    <link href={{ asset('css/datatables.css') }} rel="stylesheet">--}}
-    {{--<link href={{ asset('css/datatables_bootstrap.css') }} rel="stylesheet">--}}
+    <link href={{ asset('css/datatables.css') }} rel="stylesheet">
+    <link href={{ asset('css/datatables_bootstrap.css') }} rel="stylesheet">
     <link href="{{ asset('css/stylee.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('/css/bootstrap-select.css') }}"/>
@@ -23,10 +23,10 @@
     <script src={{asset('/js/bootstrap.bundle.js')}}></script>
 {{--    <script src={{asset('/js/moment.min.js')}}></script>--}}
     <script src={{asset('/js/sweetalert.js')}}></script>
-{{--    <script src={{asset('/js/datatables.js')}}></script>--}}
+    <script src={{asset('/js/datatables.js')}}></script>
     <script src="{{asset('/js/bootstrap-select.min.js')}}"></script>
     <script src="{{asset('/js/jquery-ui.js')}}"></script>
-    {{--<script src={{asset('/js/datatables_bootstrap.js')}}></script>--}}
+    <script src={{asset('/js/datatables_bootstrap.js')}}></script>
     <script src={{asset('/js/script.js')}}></script>
 
     <title>Select Oracle</title>

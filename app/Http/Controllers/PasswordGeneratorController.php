@@ -10,11 +10,14 @@ class PasswordGeneratorController extends Controller
 {
     public function index(){
         session_start();
-        return view('PasswordGeneratorIndex');
+
+        $cabang = $_SESSION['kodeigr'];
+        return view('PasswordGeneratorIndex')->with(compact(['cabang']));
     }
 
     public static function generate(Request $request){
-        $cabang = $request->cabang;
+        session_start();
+        $cabang = $_SESSION['kodeigr'];
         $jam = $request->jam;
         $tanggal = $request->tanggal;
         $bulan = $request->bulan;
@@ -37,7 +40,7 @@ class PasswordGeneratorController extends Controller
         $pass = $cabang + $jam + $tanggal + $bulan + $tahun + $c1 + $c2 + $c3 + $c4 + $c5;
 
         if(strlen($pass) > 6)
-            $pass = substr($pass,0,6);
+            $pass = substr($pass,-6);
         else if(strlen($pass) < 6){
             for($i=strlen($pass);$i<6;$i++){
                 $pass .= 0;
@@ -70,7 +73,7 @@ class PasswordGeneratorController extends Controller
         $pass = $cabang + $jam + $tanggal + $bulan + $tahun + $c1 + $c2 + $c3 + $c4 + $c5;
 
         if(strlen($pass) > 6)
-            $pass = substr($pass,0,6);
+            $pass = substr($pass,-6);
         else if(strlen($pass) < 6){
             for($i=strlen($pass);$i<6;$i++){
                 $pass .= 0;

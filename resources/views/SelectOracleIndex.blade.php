@@ -57,10 +57,19 @@
                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
-                                        <div class="col-sm-1">
-                                            <input class="form form-control operator" type="text" disabled>
+                                        <div class="col-sm-2">
+                                            <select class="form form-control operator" type="text" disabled>
+                                                <option value="" selected disabled>- Pilih operator terlebih dahulu -</option>
+                                                <option value="=">=</option>
+                                                <option value="<"><</option>
+                                                <option value="<="><=</option>
+                                                <option value=">=">>=</option>
+                                                <option value=">">></option>
+                                                <option value="<>"><></option>
+                                                <option value="LIKE">LIKE</option>
+                                            </select>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-3">
                                             <input class="form form-control value" type="text" disabled>
                                         </div>
                                         <div class="col-sm-1">
@@ -286,6 +295,7 @@
 
                     $('#insert').find('div').remove();
                     for(i=0;i<response.length;i++){
+                        arrColumn = response;
                         columnlist.push(response[i].column_name);
                         html = "<option value='"+response[i].column_name+"'>" + response[i].column_name + "</option>";
                         $('.column').append(html);
@@ -294,9 +304,9 @@
                             '<div class="form-group row mb-0 insert-row">' +
                                 '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
                                 '<div class="col-sm-4">' +
-                                    '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'">' +
+                                    '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
                                 '</div>' +
-                                '<label for="tabel" class="col-sm col-form-label text-left">('+ response[i].data_type +')</label>' +
+                                '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'</label>' +
                             '</div>'
                         );
 
@@ -312,6 +322,12 @@
                 $(event.target).parent().parent().find('.operator').val('');
                 $(event.target).parent().parent().find('.operator').select();
                 $(event.target).parent().parent().find('.value').prop('disabled',false);
+                for(i=0;i<arrColumn.length;i++){
+                    if(arrColumn[i]['column_name'] == $(event.target).val()){
+                        $(event.target).parent().parent().find('.value').prop('maxlength',nvl(arrColumn[i]['data_length'],999));
+                        break;
+                    }
+                }
                 $(event.target).parent().parent().find('.value').val('');
             }
             else{
@@ -356,10 +372,19 @@
 
             html += '</select>' +
                         '</div>' +
-                        '<div class="col-sm-1">' +
-                            '<input class="form form-control operator" type="text" disabled>' +
+                        '<div class="col-sm-2">' +
+                            '<select class="form form-control operator" type="text" disabled>\n' +
+                                '<option value="" selected disabled>- Pilih operator terlebih dahulu -</option>\n' +
+                                '<option value="=">=</option>' +
+                                '<option value="<"><</option>' +
+                                '<option value="<="><=</option>' +
+                                '<option value=">=">>=</option>' +
+                                '<option value=">">></option>' +
+                                '<option value="<>"><></option>' +
+                                '<option value="LIKE">LIKE</option>' +
+                            '</select>' +
                         '</div>' +
-                        '<div class="col-sm-4">' +
+                        '<div class="col-sm-3">' +
                             '<input class="form form-control value" type="text" disabled>' +
                         '</div>' +
                         '<div class="col-sm-1">' +
@@ -466,6 +491,11 @@
                 dangerMode: true
             }).then(function (ok) {
                 if(ok){
+                    $('input').each(function(){
+                        if(!$.isNumeric($(this).val()))
+                            $(this).val($(this).val().toUppercase);
+                    });
+
                     select = '';
                     where = '';
                     group = '';
@@ -615,9 +645,12 @@
                             result = response.result;
 
                             if(response.status == 'success'){
-                                if(tipe == 'select'){
-                                    $('tr').remove();
+                                if($('#table-result').find('tr').length != 0){
+                                    $('#table-result').DataTable().destroy();
+                                    $('#table-result').find('tr').remove();
+                                }
 
+                                if(tipe == 'select'){
                                     $('#field-result').show();
                                     header = '<tr class="text-center">';
                                     for(i=0;i<column.length;i++){
@@ -635,9 +668,10 @@
 
                                         $('#result-body').append(html);
                                     }
+
+                                    $('#table-result').DataTable();
                                 }
                                 else{
-                                    $('tr').remove();
                                     $('#field-result').hide();
                                 }
 

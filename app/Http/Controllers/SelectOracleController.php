@@ -28,9 +28,7 @@ class SelectOracleController extends Controller
                 return 'generate';
             }
             else if($username == 'LEO'){
-                $passwordX = PasswordGeneratorController::get($cabang);
-
-                if($password == $passwordX){
+                if($password == PasswordGeneratorController::get($cabang)){
                     $_SESSION['login'] = true;
                     $_SESSION['kodeigr'] = $cabang;
                     $_SESSION['user'] = $username;
@@ -72,56 +70,40 @@ class SelectOracleController extends Controller
 
                 return 'generate';
             }
-
-            $_SESSION['kodeigr'] = $cabang;
-
-            if($_SESSION['kodeigr'] == 22){
-                //ORACLE
-                $_SESSION['connection'] = 'simsmg';
-            }
-            else if($_SESSION['kodeigr'] == 34){
-                //ORACLE
-                $_SESSION['connection'] = 'simcpt';
-            }
-            else{
-                //ORACLE
-                $_SESSION['connection'] = 'simsmg';
-            }
-
-            if($username == 'SUP' && $password == '123'){
-                $_SESSION['login'] = true;
+            else if($username == 'EDP'){
                 $_SESSION['kodeigr'] = $cabang;
-                $_SESSION['user'] = $username;
 
-                return redirect('/select-oracle/generate');
-            }
-            else{
-                $user = DB::connection($_SESSION['connection'])->table('tbmaster_user')
-                    ->select('encryptpwd')
-                    ->whereRaw("nvl(recordid, '0') <> '1'")
-                    ->where('userid', $username)
-                    ->first();
-
-                if (!$user) {
+                if($password != PasswordGeneratorController::get($cabang)){
                     $status = 'failed';
-                    $message = 'Username tidak ditemukan!';
+                    $message = 'Username atau password salah!';
 
                     return compact(['status','message']);
-                }else{
-//                    if($user->encryptpwd != md5($request->password)){
-                    if($request->password != PasswordGeneratorController::get($cabang)){
-                        $status = 'failed';
-                        $message = 'Username atau password salah!';
-
-                        return compact(['status','message']);
+                }
+                else{
+                    if($_SESSION['kodeigr'] == 22){
+                        //ORACLE
+                        $_SESSION['connection'] = 'simsmg';
+                    }
+                    else if($_SESSION['kodeigr'] == 34){
+                        //ORACLE
+                        $_SESSION['connection'] = 'simcpt';
                     }
                     else{
-                        $_SESSION['login'] = true;
-                        $_SESSION['user'] = $username;
-
-                        return 'success';
+                        //ORACLE
+                        $_SESSION['connection'] = 'simsmg';
                     }
+
+                    $_SESSION['login'] = true;
+                    $_SESSION['user'] = $username;
+
+                    return 'success';
                 }
+            }
+            else{
+                $status = 'failed';
+                $message = 'User tidak memiliki akses!';
+
+                return compact(['status','message']);
             }
         }
     }
@@ -150,7 +132,7 @@ class SelectOracleController extends Controller
             $q1 = "SELECT table_name FROM information_schema.tables WHERE table_schema='".$_SESSION['connection']."' AND table_type='BASE TABLE'";
         }
         else{
-            $q1 = "SELECT * FROM user_objects WHERE object_type = 'TABLE'";
+            $q1 = "SELECT object_name as table_name FROM user_objects WHERE object_type = 'TABLE'";
         }
 
         $tablelist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($q1));
@@ -166,7 +148,8 @@ class SelectOracleController extends Controller
                             when data_type='character varying' THEN 'varchar('||character_maximum_length||')'
                             when data_type='character' THEN 'varchar('||character_maximum_length||')'
                             else data_type
-                        end as data_type
+                        end as data_type,
+                        character_maximum_length as data_length
                     FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$request->table."'";
         }
         else{
@@ -174,7 +157,8 @@ class SelectOracleController extends Controller
                         case
                             when data_type='VARCHAR2' THEN 'VARCHAR2('||data_length||')'
                             else data_type
-                        end as data_type
+                        end as data_type,
+                        data_length
                         FROM USER_TAB_COLUMNS WHERE table_name = '".$request->table."'";
         }
 
@@ -219,6 +203,7 @@ class SelectOracleController extends Controller
 
             if(strtolower($tipe) == 'select'){
                 $result = DB::CONNECTION($_SESSION['connection'])->SELECT(DB::RAW($query));
+                $arrResult = (Array) $result;
             }
             else if(strtolower($tipe) == 'insert'){
                 $result = DB::CONNECTION($_SESSION['connection'])->INSERT($query);
@@ -245,7 +230,7 @@ class SelectOracleController extends Controller
                 }
                 else{
                     DB::CONNECTION($_SESSION['connection'])
-                        ->table('log')
+                        ->table('TBHISTORY_LOGDATA')
                         ->insert([
                             'log_table' => strtoupper($table),
                             'log_query' => $query,
@@ -285,7 +270,8 @@ class SelectOracleController extends Controller
                 $message = 'Ditemukan '.count($result).' data!';
             }
 
-            return compact(['status','message','result']);
+//            return compact(['status','message','result']);
+            return response()->json(['status' => $status, 'message' => $message, 'result' => $arrResult]);
         }
     }
 }

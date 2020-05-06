@@ -13,10 +13,11 @@
                                 <div class="form-group row mb-0">
                                     <label for="cabang" class="col-sm-2 col-form-label">Cabang</label>
                                     <div class="col-sm-3">
-                                        <select type="text" class="form-control" id="cabang">
-                                            <option value="" selected disabled>- Pilih Cabang -</option>
-                                            <option value="22">22 - SEMARANG</option>
-                                        </select>
+                                        <input type="text" class="form-control" id="cabang" value="{{ $cabang }}" disabled>
+{{--                                        <select type="text" class="form-control" id="cabang">--}}
+{{--                                            <option value="" selected disabled>- Pilih Cabang -</option>--}}
+{{--                                            <option value="22">22 - SEMARANG</option>--}}
+{{--                                        </select>--}}
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0">
