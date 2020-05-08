@@ -300,18 +300,34 @@
                         html = "<option value='"+response[i].column_name+"'>" + response[i].column_name + "</option>";
                         $('.column').append(html);
 
-                        $('#insert').append(
-                            '<div class="form-group row mb-0 insert-row">' +
+                        if(response[i].data_type == 'timestamp without time zone' || response[i].data_type =='date'){
+                            $('#insert').append(
+                                '<div class="form-group row mb-0 insert-row">' +
                                 '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
                                 '<div class="col-sm-4">' +
-                                    '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
+                                '<input class="form form-control insert-column tanggal" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
                                 '</div>' +
                                 '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'</label>' +
-                            '</div>'
-                        );
+                                '</div>'
+                            );
+                        }
+                        else{
+                            $('#insert').append(
+                                '<div class="form-group row mb-0 insert-row">' +
+                                '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
+                                '<div class="col-sm-4">' +
+                                '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
+                                '</div>' +
+                                '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'</label>' +
+                                '</div>'
+                            );
+                        }
 
                         column.push(response[i].column_name);
                     }
+                    $('.tanggal').datepicker({
+                        "dateFormat" : "dd/mm/yy"
+                    });
                 }
             });
         });
@@ -322,7 +338,18 @@
                 $(event.target).parent().parent().find('.operator').val('');
                 $(event.target).parent().parent().find('.operator').select();
                 $(event.target).parent().parent().find('.value').prop('disabled',false);
+                $('.value').each(function(){
+                    if($(this).hasClass('hasDatepicker')){
+                        $(this).datepicker('destroy');
+                        // $(this).removeClass('hasDatepicker');
+                    }
+                })
                 for(i=0;i<arrColumn.length;i++){
+                    if(arrColumn[i]['data_type'] == 'timestamp without time zone' || arrColumn[i]['data_type'] =='date'){
+                        $(event.target).parent().parent().find('.value').datepicker({
+                            "dateFormat" : "dd/mm/yy"
+                        });
+                    }
                     if(arrColumn[i]['column_name'] == $(event.target).val()){
                         $(event.target).parent().parent().find('.value').prop('maxlength',nvl(arrColumn[i]['data_length'],999));
                         break;
