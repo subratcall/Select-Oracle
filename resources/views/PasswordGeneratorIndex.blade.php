@@ -130,6 +130,30 @@
 
         $("#tanggal").datepicker().datepicker("setDate", new Date());
 
+        $("#jam").on('change',function(){
+            date = new Date();
+
+            tgl = date.getDate();
+            bln = date.getMonth() + 1;
+            if(bln < 10)
+                bln = '0' + bln;
+            thn = date.getFullYear();
+            jam = date.getHours();
+
+            now = tgl + '/' + bln + '/' + thn;
+
+            if($('#tanggal').val() == now && $('#jam').val() < jam){
+                $('#jam').val('');
+                swal({
+                    title: 'Jam tidak boleh kurang dari jam sekarang!',
+                    icon: 'error'
+                }).then(function(){
+                    $('#jam').focus();
+                })
+            }
+
+        });
+
         $('#btn-generate').on('click',function(){
             date = $('#tanggal').val().split('/');
 

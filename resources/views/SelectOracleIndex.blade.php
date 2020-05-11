@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="col-sm-2">
                                             <select class="form form-control operator" type="text" disabled>
-                                                <option value="" selected disabled>- Pilih operator terlebih dahulu -</option>
+                                                <option value="" selected disabled>- Operator -</option>
                                                 <option value="=">=</option>
                                                 <option value="<"><</option>
                                                 <option value="<="><=</option>
@@ -519,8 +519,9 @@
             }).then(function (ok) {
                 if(ok){
                     $('input').each(function(){
-                        if(!$.isNumeric($(this).val()))
-                            $(this).val($(this).val().toUppercase);
+                        if(!$.isNumeric($(this).val())){
+                            $(this).val($(this).val().toUpperCase());
+                        }
                     });
 
                     select = '';
@@ -616,6 +617,8 @@
                         query = 'UPDATE ' + $('#tabel').val() + ' SET ';
 
                         $('.update-row').each(function(){
+                            zzz = $(this).find('.update').val();
+                            xxx = $(this).find('.value').val();
                             if($(this).find('.update').val() != '' && $(this).find('.value').val() != ''){
                                 query += $(this).find('.update').val() + " = '" + $(this).find('.value').val().toUpperCase() + "', ";
                             }
@@ -681,7 +684,7 @@
                                     $('#field-result').show();
                                     header = '<tr class="text-center">';
                                     for(i=0;i<column.length;i++){
-                                        header += "<th>" + column[i] + "</th>";
+                                        header += "<th>" + column[i].toUpperCase() + "</th>";
                                     }
                                     header += "</tr>";
 
@@ -689,7 +692,7 @@
                                     for(i=0;i<result.length;i++){
                                         html = '<tr class="text-left">';
                                         for(j=0;j<column.length;j++){
-                                            html += '<td>' + nvl(result[i][column[j]], '') + '</td>';
+                                            html += '<td>' + nvl(result[i][column[j].toLowerCase()], '') + '</td>';
                                         }
                                         html += '</tr>';
 

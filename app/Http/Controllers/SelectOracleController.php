@@ -129,10 +129,10 @@ class SelectOracleController extends Controller
 //        dd($x);
 
         if($_SESSION['database'] == 'postgre'){
-            $q1 = "SELECT table_name FROM information_schema.tables WHERE table_schema='".$_SESSION['connection']."' AND table_type='BASE TABLE'";
+            $q1 = "SELECT table_name FROM information_schema.tables WHERE table_schema='".$_SESSION['connection']."' AND table_type='BASE TABLE' ORDER BY table_name";
         }
         else{
-            $q1 = "SELECT object_name as table_name FROM user_objects WHERE object_type = 'TABLE'";
+            $q1 = "SELECT object_name as table_name FROM user_objects WHERE object_type = 'TABLE' ORDER BY object_name";
         }
 
         $tablelist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($q1));
@@ -198,6 +198,8 @@ class SelectOracleController extends Controller
 
         $status = '';
         $message = '';
+        $arrResult = '';
+
         try{
             DB::CONNECTION($_SESSION['connection'])->beginTransaction();
 
