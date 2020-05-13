@@ -11,12 +11,18 @@
 |
 */
 
-Route::get('/select-oracle/login','SelectOracleController@index');
-Route::post('/select-oracle/login','SelectOracleController@login');
-Route::get('/select-oracle/logout','SelectOracleController@logout');
-Route::get('/select-oracle/index','SelectOracleController@index');
-Route::post('/select-oracle/execute','SelectOracleController@execute');
-Route::post('/select-oracle/getColumnList','SelectOracleController@getColumnList');
 
-Route::get('/select-oracle/generate','PasswordGeneratorController@index');
-Route::post('/select-oracle/generate','PasswordGeneratorController@generate');
+Route::get('/select-oracle/login', function(){
+    return view('SelectOracleLogin');
+});
+Route::post('/select-oracle/login', 'SelectOracleController@login');
+
+Route::get('/select-oracle/generate', 'PasswordGeneratorController@index')->middleware('CheckLogin');
+Route::post('/select-oracle/generate', 'PasswordGeneratorController@generate')->middleware('CheckLogin');
+
+Route::middleware(['CheckLogin'])->group(function () {
+    Route::get('/select-oracle/logout', 'SelectOracleController@logout');
+    Route::get('/select-oracle/index', 'SelectOracleController@index');
+    Route::post('/select-oracle/execute', 'SelectOracleController@execute');
+    Route::post('/select-oracle/getColumnList', 'SelectOracleController@getColumnList');
+});

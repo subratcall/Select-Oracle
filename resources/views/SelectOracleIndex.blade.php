@@ -5,6 +5,21 @@
     <div class="container mt-3">
         <div class="row">
             <div class="col-sm-12">
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h4 class="text-left text-uppercase" id="header-koneksi">SERVER : {{ $connection }}</h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <h4 class="text-right" id="header-tanggal"></h4>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="row">
+
+                </div>
+            </div>
+            <div class="col-sm-12">
                 <fieldset class="card border-secondary">
                     <legend  class="w-auto ml-5">Select Oracle</legend>
                     <div class="card-body shadow-lg cardForm">
@@ -208,12 +223,36 @@
 
     <script>
         $(document).ready(function () {
-
+            $('#header-tanggal').append(now());
         });
 
         columnlist = '';
         result = '';
         column = [];
+
+        function now(){
+            date = new Date();
+
+            var d = new Date();
+            var weekday = new Array(7);
+            weekday[0] = "Minggu";
+            weekday[1] = "Senin";
+            weekday[2] = "Selasa";
+            weekday[3] = "Rabu";
+            weekday[4] = "Kamis";
+            weekday[5] = "Jumat";
+            weekday[6] = "Sabtu";
+
+            var hari = weekday[date.getDay()];
+
+            tgl = date.getDate();
+            bln = date.getMonth() + 1;
+            if(bln < 10)
+                bln = '0' + bln;
+            thn = date.getFullYear();
+
+            return hari+', '+tgl+'/'+bln+'/'+thn;
+        }
 
         $('#tipe').on('change',function(){
             $('#select').find('input').val('');
@@ -279,12 +318,20 @@
                 },
                 data: {table: $(this).val()},
                 beforeSend: function () {
-                    $('#modal-loader').modal('toggle');
+                    $('#modal-loader').modal('show');
                 },
                 success: function (response) {
-                    if($('#modal-loader').is(':visible'))
-                        $('#modal-loader').modal('toggle');
-
+                    swal({
+                        title: 'Tabel '+$('#tabel').val()+' berhasil dipilih!',
+                        text: '{{ strtoupper($_SESSION['connection']) }}',
+                        icon: 'success',
+                        buttons: false,
+                        timer: 1000,
+                    }).then(function(){
+                        if($('#modal-loader').is(':visible')){
+                            $('#modal-loader').modal('hide');
+                        }
+                    });
                     $('.column').find('option').remove();
                     $('.column').append("<option value='*' selected>* - SEMUA</option>");
 
@@ -401,7 +448,7 @@
                         '</div>' +
                         '<div class="col-sm-2">' +
                             '<select class="form form-control operator" type="text" disabled>\n' +
-                                '<option value="" selected disabled>- Pilih operator terlebih dahulu -</option>\n' +
+                                '<option value="" selected disabled>- Operator -</option>\n' +
                                 '<option value="=">=</option>' +
                                 '<option value="<"><</option>' +
                                 '<option value="<="><=</option>' +
@@ -501,6 +548,7 @@
         function initial(){
             $('input').val('');
             $('select').val('');
+            $('.direction').val('ASC');
             $('#where').hide();
             $('#update').hide();
             $('#insert').hide();
@@ -624,9 +672,11 @@
                             }
                         });
                         query = query.slice(0,-2);
-                        where = ' WHERE ';
+                        where = '';
                         $('.where-row').each(function(){
                             if($(this).find('.where').val() != '' && $(this).find('.operator').val() != '' && $(this).find('.value').val() != ''){
+                                if(where == '')
+                                    where = ' WHERE ';
                                 if(where != ' WHERE '){
                                     where += ' AND ';
                                 }
@@ -665,11 +715,11 @@
                         },
                         data: {table: $('#tabel').val(), data: query, column: column},
                         beforeSend: function () {
-                            $('#modal-loader').modal('toggle');
+                            $('#modal-loader').modal('show');
                         },
                         success: function (response) {
                             if($('#modal-loader').is(':visible'))
-                                $('#modal-loader').modal('toggle');
+                                $('#modal-loader').modal('hide');
                             console.log(response);
 
                             result = response.result;
@@ -718,6 +768,8 @@
                                 }).then(function(ok){
                                     if(ok && tipe != 'select')
                                         initial();
+                                    if($('#modal-loader').is(':visible'))
+                                        $('#modal-loader').modal('hide');
                                 });
                             }
                             else{
@@ -728,6 +780,8 @@
                                 }).then(function(ok){
                                     if(ok && tipe != 'select')
                                         initial();
+                                    if($('#modal-loader').is(':visible'))
+                                        $('#modal-loader').modal('hide');
                                 });
                             }
                         }

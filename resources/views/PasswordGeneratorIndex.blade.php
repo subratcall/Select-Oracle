@@ -124,13 +124,7 @@
 
     </style>
     <script>
-        $('#tanggal').datepicker({
-            "dateFormat" : "dd/mm/yy"
-        });
-
-        $("#tanggal").datepicker().datepicker("setDate", new Date());
-
-        $("#jam").on('change',function(){
+        $(document).ready(function () {
             date = new Date();
 
             tgl = date.getDate();
@@ -142,17 +136,26 @@
 
             now = tgl + '/' + bln + '/' + thn;
 
-            if($('#tanggal').val() == now && $('#jam').val() < jam){
-                $('#jam').val('');
-                swal({
-                    title: 'Jam tidak boleh kurang dari jam sekarang!',
-                    icon: 'error'
-                }).then(function(){
-                    $('#jam').focus();
-                })
-            }
+            $('#jam').val(jam);
 
+            $('#tanggal').datepicker({
+                dateFormat : "dd/mm/yy",
+                minDate : new Date()
+            });
+            $("#tanggal").datepicker().datepicker("setDate", new Date());
         });
+
+        // $("#jam").on('change',function(){
+        //     if($('#tanggal').val() == now && $('#jam').val() < jam){
+        //         $('#jam').val('');
+        //         swal({
+        //             title: 'Jam tidak boleh kurang dari jam sekarang!',
+        //             icon: 'error'
+        //         }).then(function(){
+        //             $('#jam').focus();
+        //         })
+        //     }
+        // });
 
         $('#btn-generate').on('click',function(){
             date = $('#tanggal').val().split('/');

@@ -9,14 +9,11 @@ use Carbon\Carbon;
 class PasswordGeneratorController extends Controller
 {
     public function index(){
-        session_start();
-
         $cabang = $_SESSION['kodeigr'];
         return view('PasswordGeneratorIndex')->with(compact(['cabang']));
     }
 
     public static function generate(Request $request){
-        session_start();
         $cabang = $_SESSION['kodeigr'];
         $jam = $request->jam;
         $tanggal = $request->tanggal;

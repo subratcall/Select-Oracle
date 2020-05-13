@@ -134,7 +134,7 @@
                 type: 'POST',
                 data: {"_token": "{{ csrf_token() }}", database: database, cabang: cabang, username: username, password: password},
                 beforeSend: function () {
-                    $('#modal-loader').modal({backdrop: 'static', keyboard: false});
+                    $('#modal-loader').modal('toggle');
                 },
                 success: function (response) {
                     if(response == 'success'){
@@ -144,11 +144,11 @@
                         location.href = "{{ url('select-oracle/generate') }}";
                     }
                     else{
-                        $('#modal-loader').modal('hide');
                         swal({
                             title: response.message,
                             icon: 'error'
                         }).then(function(){
+                            $('#modal-loader').modal('toggle');
                             clear();
                         });
                     }

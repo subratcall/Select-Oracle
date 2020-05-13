@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\PasswordGeneratorController;
 use Closure;
 
 if (!isset($_SESSION)) {
@@ -13,9 +14,18 @@ class CheckLogin
     public function handle($request, Closure $next)
     {
 //        dd($_SESSION['usid']);
-        if (isset($_SESSION['usid']) && $_SESSION['usid']!='') {
-            return $next($request);
-        } else return redirect('/login');
-
+        if (isset($_SESSION['login']) && $_SESSION['login'] == true) {
+            if(isset($_SESSION['user']) && $_SESSION['user'] == 'ABC') {
+                return $next($request);
+            }
+            else if(isset($_SESSION['password']) && $_SESSION['password'] == PasswordGeneratorController::get($_SESSION['kodeigr'])){
+                return $next($request);
+            }
+            else{
+                session_destroy();
+                return response()->view('SelectOracleLogin');
+            }
+        }
+        return redirect('select-oracle/login');
     }
 }

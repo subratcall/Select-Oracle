@@ -32,6 +32,7 @@ class SelectOracleController extends Controller
                     $_SESSION['login'] = true;
                     $_SESSION['kodeigr'] = $cabang;
                     $_SESSION['user'] = $username;
+                    $_SESSION['password'] = $password;
 
                     if($_SESSION['kodeigr'] == 22){
                         //POSTGRESQL
@@ -109,17 +110,12 @@ class SelectOracleController extends Controller
     }
 
     public function logout(){
-        session_start();
         session_destroy();
 
-        return redirect('/select-oracle/login');
+        return view('SelectOracleLogin');
     }
 
     public function index(){
-        session_start();
-
-//        dd($_SESSION['kodeigr']);
-
         if(!isset($_SESSION['login']) || $_SESSION['login'] != true){
             return view('SelectOracleLogin');
         }
@@ -129,7 +125,7 @@ class SelectOracleController extends Controller
 //        dd($x);
 
         if($_SESSION['database'] == 'postgre'){
-            $q1 = "SELECT table_name FROM information_schema.tables WHERE table_schema='".$_SESSION['connection']."' AND table_type='BASE TABLE' ORDER BY table_name";
+            $q1 = "SELECT table_name FROM information_schema.tables WHERE table_schema='".$_SESSION['connection']."' AND table_type='BASE TABLE' ORDER BY table_name ASC";
         }
         else{
             $q1 = "SELECT object_name as table_name FROM user_objects WHERE object_type = 'TABLE' ORDER BY object_name";
@@ -137,11 +133,12 @@ class SelectOracleController extends Controller
 
         $tablelist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($q1));
 
-        return view('SelectOracleIndex')->with(compact(['tablelist']));
+        $connection = $_SESSION['connection'];
+
+        return view('SelectOracleIndex')->with(compact(['tablelist','connection']));
     }
 
     public function getColumnList(Request $request){
-        session_start();
         if($_SESSION['database'] == 'postgre'){
             $query = "SELECT column_name,
                         case
@@ -168,7 +165,6 @@ class SelectOracleController extends Controller
     }
 
     public function execute(Request $request){
-        session_start();
         $result = '';
         $table = $request->table;
         $where = '';

@@ -38,7 +38,7 @@
     <div class="container-fluid">
         {{--<div class="row justify-content-center">--}}
         {{--<div class="col-sm-11">--}}
-        <a class="navbar-brand" href="{{url("/")}}"><img src="{{asset('image/Indogrosir_logo.jpg')}}" width=100px">
+        <a class="navbar-brand" href="{{url("/select-oracle/index")}}"><img src="{{asset('image/Indogrosir_logo.jpg')}}" width=100px">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
