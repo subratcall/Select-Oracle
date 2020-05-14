@@ -96,6 +96,7 @@ class SelectOracleController extends Controller
 
                     $_SESSION['login'] = true;
                     $_SESSION['user'] = $username;
+                    $_SESSION['password'] = $password;
 
                     return 'success';
                 }
