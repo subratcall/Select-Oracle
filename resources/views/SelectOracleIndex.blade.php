@@ -411,12 +411,12 @@
                     }
                 })
                 for(i=0;i<arrColumn.length;i++){
-                    if(arrColumn[i]['data_type'] == 'timestamp without time zone' || arrColumn[i]['data_type'] =='date'){
+                    if(toLower(arrColumn[i]['data_type']) == 'timestamp without time zone' || toLower(arrColumn[i]['data_type']) =='date'){
                         $(event.target).parent().parent().find('.value').datepicker({
                             "dateFormat" : "dd/mm/yy"
                         });
                     }
-                    if(arrColumn[i]['column_name'] == $(event.target).val()){
+                    if(toLower(arrColumn[i]['column_name']) == $(event.target).val()){
                         $(event.target).parent().parent().find('.value').prop('maxlength',nvl(arrColumn[i]['data_length'],999));
                         break;
                     }
