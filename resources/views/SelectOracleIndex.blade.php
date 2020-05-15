@@ -28,8 +28,8 @@
                                 <div class="form-group row mb-0">
                                     <label for="tabel" class="col-sm-2 col-form-label">Tabel</label>
                                     <div class="col-sm-4">
-                                        <select type="text" class="form-control" id="tabel">
-                                            <option value="" selected disabled>- Pilih Tabel -</option>
+                                        <select class="form-control selectized text-left" id="tabel">
+                                            <option value="" selected disabled>- PILIH TABEL -</option>
                                             @foreach($tablelist as $t)
                                             <option value="{{ $t->table_name }}">{{ strtoupper($t->table_name) }}</option>
                                             @endforeach
@@ -40,7 +40,7 @@
                                     <label for="tipe" class="col-sm-2 col-form-label">Tipe</label>
                                     <div class="col-sm-4">
                                         <select type="text" class="form-control" id="tipe">
-                                            <option value=""selected disabled>- Pilih tipe query -</option>
+                                            <option value=""selected disabled>- PILIH TIPE QUERY -</option>
                                             <option value="select">SELECT</option>
                                             <option value="insert">INSERT</option>
                                             <option value="update">UPDATE</option>
@@ -218,12 +218,18 @@
             display: block;
         }
 
+        .nowrap{
+            white-space: nowrap;
+        }
+
 
     </style>
 
     <script>
         $(document).ready(function () {
             $('#header-tanggal').append(now());
+
+            $('#tabel').selectize();
         });
 
         columnlist = '';
@@ -310,73 +316,86 @@
         });
 
         $('#tabel').on('change',function(){
-            $.ajax({
-                url: '{{ url('select-oracle/getColumnList') }}',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {table: $(this).val()},
-                beforeSend: function () {
-                    $('#modal-loader').modal('show');
-                },
-                success: function (response) {
-                    swal({
-                        title: 'Tabel '+$('#tabel').val()+' berhasil dipilih!',
-                        text: '{{ strtoupper($_SESSION['connection']) }}',
-                        icon: 'success',
-                        buttons: false,
-                        timer: 1000,
-                    }).then(function(){
-                        if($('#modal-loader').is(':visible')){
-                            $('#modal-loader').modal('hide');
+            if($(this).val() != ''){
+                $.ajax({
+                    url: '{{ url('select-oracle/getColumnList') }}',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {table: $(this).val()},
+                    beforeSend: function () {
+                        $('#modal-loader').modal('show');
+                    },
+                    success: function (response) {
+                        swal({
+                            title: 'Tabel '+$('#tabel').val()+' berhasil dipilih!',
+                            text: '{{ strtoupper($_SESSION['connection']) }}',
+                            icon: 'success',
+                            buttons: false,
+                            timer: 1000,
+                        }).then(function(){
+                            if($('#modal-loader').is(':visible')){
+                                $('#modal-loader').modal('hide');
+                            }
+                        });
+                        $('.column').find('option').remove();
+                        $('.column').append("<option value='*' selected>* - SEMUA</option>");
+
+                        $('#update').find('option').remove();
+                        $('#update').find('.column').append('<option value="" disabled selected>- Pilih kolom -</option>');
+
+                        columnlist = [];
+
+                        $('#insert').find('div').remove();
+                        for(i=0;i<response.length;i++){
+                            arrColumn = response;
+                            columnlist.push(response[i].column_name);
+                            html = "<option value='"+response[i].column_name+"'>" + response[i].column_name + "</option>";
+                            $('.column').append(html);
+
+                            if(toLower(response[i].data_type) == 'timestamp without time zone' || toLower(response[i].data_type) =='date'){
+                                $('#insert').append(
+                                    '<div class="form-group row mb-0 insert-row">' +
+                                    '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
+                                    '<div class="col-sm-4">' +
+                                    '<input class="form form-control insert-column tanggal" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
+                                    '</div>' +
+                                    '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'</label>' +
+                                    '</div>'
+                                );
+                            }
+                            else if(toLower(response[i].data_type) == 'char'){
+                                $('#insert').append(
+                                    '<div class="form-group row mb-0 insert-row">' +
+                                    '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
+                                    '<div class="col-sm-4">' +
+                                    '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
+                                    '</div>' +
+                                    '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'(1)</label>' +
+                                    '</div>'
+                                );
+                            }
+                            else{
+                                $('#insert').append(
+                                    '<div class="form-group row mb-0 insert-row">' +
+                                    '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
+                                    '<div class="col-sm-4">' +
+                                    '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
+                                    '</div>' +
+                                    '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'</label>' +
+                                    '</div>'
+                                );
+                            }
+
+                            column.push(response[i].column_name);
                         }
-                    });
-                    $('.column').find('option').remove();
-                    $('.column').append("<option value='*' selected>* - SEMUA</option>");
-
-                    $('#update').find('option').remove();
-                    $('#update').find('.column').append('<option value="" disabled selected>- Pilih kolom -</option>');
-
-                    columnlist = [];
-
-                    $('#insert').find('div').remove();
-                    for(i=0;i<response.length;i++){
-                        arrColumn = response;
-                        columnlist.push(response[i].column_name);
-                        html = "<option value='"+response[i].column_name+"'>" + response[i].column_name + "</option>";
-                        $('.column').append(html);
-
-                        if(response[i].data_type == 'timestamp without time zone' || response[i].data_type =='date'){
-                            $('#insert').append(
-                                '<div class="form-group row mb-0 insert-row">' +
-                                '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
-                                '<div class="col-sm-4">' +
-                                '<input class="form form-control insert-column tanggal" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
-                                '</div>' +
-                                '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'</label>' +
-                                '</div>'
-                            );
-                        }
-                        else{
-                            $('#insert').append(
-                                '<div class="form-group row mb-0 insert-row">' +
-                                '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
-                                '<div class="col-sm-4">' +
-                                '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
-                                '</div>' +
-                                '<label for="tabel" class="col-sm col-form-label text-left">'+ response[i].data_type +'</label>' +
-                                '</div>'
-                            );
-                        }
-
-                        column.push(response[i].column_name);
+                        $('.tanggal').datepicker({
+                            "dateFormat" : "dd/mm/yy"
+                        });
                     }
-                    $('.tanggal').datepicker({
-                        "dateFormat" : "dd/mm/yy"
-                    });
-                }
-            });
+                });
+            }
         });
 
         function column_onchange(event){
@@ -556,6 +575,10 @@
             $('#group').hide();
             $('#order').hide();
             $('#field-result').hide();
+
+            var $select = $('#tabel').selectize();
+            var control = $select[0].selectize;
+            control.clear();
         }
 
         $('#btn-execute').on('click',function(){
@@ -742,7 +765,7 @@
                                     for(i=0;i<result.length;i++){
                                         html = '<tr class="text-left">';
                                         for(j=0;j<column.length;j++){
-                                            html += '<td>' + nvl(result[i][column[j].toLowerCase()], '') + '</td>';
+                                            html += '<td class="nowrap">' + nvl(result[i][column[j].toLowerCase()], '') + '</td>';
                                         }
                                         html += '</tr>';
 

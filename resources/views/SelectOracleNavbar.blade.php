@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="{{ asset('/css/fontawesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('/css/jquery-ui.css') }}">
 
+    <link rel="stylesheet" href="{{ asset('/selectize/selectize.bootstrap3.min.css') }}" />
+
 
     {{-- JS --}}
     <script src={{asset('/js/jquery.js')}}></script>
@@ -28,6 +30,8 @@
     <script src="{{asset('/js/jquery-ui.js')}}"></script>
     <script src={{asset('/js/datatables_bootstrap.js')}}></script>
     <script src={{asset('/js/script.js')}}></script>
+
+    <script src="{{ asset('/selectize/selectize.min.js') }}"></script>
 
     <title>Select Oracle</title>
 

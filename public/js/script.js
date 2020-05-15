@@ -103,3 +103,17 @@ function checkDate(date){
     }
     else return false;
 }
+
+function toLower(string){
+    if(string == null || string == ''){
+        return string;
+    }
+    else return string.toLowerCase();
+}
+
+function toUpper(string){
+    if(string == null || string == ''){
+        return string;
+    }
+    else return string.toUpperCase();
+}
