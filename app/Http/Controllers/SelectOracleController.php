@@ -6,12 +6,13 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SelectOracleController extends Controller
 {
     public function login(Request $request){
         $database = $request->database;
-        $cabang = $request->cabang;
+        $cabang = '22';
         $username = $request->username;
         $password = $request->password;
 
@@ -20,32 +21,14 @@ class SelectOracleController extends Controller
         $_SESSION['database'] = $database;
 
         if($database == 'postgre'){
-            if($username == 'ABC' && $password == '123'){
-                $_SESSION['login'] = true;
-                $_SESSION['kodeigr'] = $cabang;
-                $_SESSION['user'] = $username;
-
-                return 'generate';
-            }
-            else if($username == 'LEO'){
+            if($username == 'LEO'){
                 if($password == PasswordGeneratorController::get($cabang)){
                     $_SESSION['login'] = true;
                     $_SESSION['kodeigr'] = $cabang;
                     $_SESSION['user'] = $username;
                     $_SESSION['password'] = $password;
-
-                    if($_SESSION['kodeigr'] == 22){
-                        //POSTGRESQL
-                        $_SESSION['connection'] = 'semarang';
-                    }
-                    else if($_SESSION['kodeigr'] == 34){
-                        //POSTGRESQL
-                        $_SESSION['connection'] = 'ciputat';
-                    }
-                    else{
-                        //POSTGRESQL
-                        $_SESSION['connection'] = 'logquery';
-                    }
+                    $_SESSION['connection'] = 'semarang';
+                    $_SESSION['status'] = 'select';
 
                     return 'success';
                 }
@@ -64,14 +47,7 @@ class SelectOracleController extends Controller
             }
         }
         else if($database == 'oracle'){
-            if($username == 'ABC' && $password == '123'){
-                $_SESSION['login'] = true;
-                $_SESSION['kodeigr'] = $cabang;
-                $_SESSION['user'] = $username;
-
-                return 'generate';
-            }
-            else if($username == 'EDP'){
+            if($username == 'EDP'){
                 $_SESSION['kodeigr'] = $cabang;
 
                 if($password != PasswordGeneratorController::get($cabang)){
@@ -81,22 +57,11 @@ class SelectOracleController extends Controller
                     return compact(['status','message']);
                 }
                 else{
-                    if($_SESSION['kodeigr'] == 22){
-                        //ORACLE
-                        $_SESSION['connection'] = 'simsmg';
-                    }
-                    else if($_SESSION['kodeigr'] == 34){
-                        //ORACLE
-                        $_SESSION['connection'] = 'simcpt';
-                    }
-                    else{
-                        //ORACLE
-                        $_SESSION['connection'] = 'simsmg';
-                    }
-
+                    $_SESSION['connection'] = 'simsmg';
                     $_SESSION['login'] = true;
                     $_SESSION['user'] = $username;
                     $_SESSION['password'] = $password;
+                    $_SESSION['status'] = 'select';
 
                     return 'success';
                 }
@@ -113,17 +78,12 @@ class SelectOracleController extends Controller
     public function logout(){
         session_destroy();
 
-        return view('SelectOracleLogin');
+        return redirect('/select-oracle/login');
     }
 
     public function index(){
-        if(!isset($_SESSION['login']) || $_SESSION['login'] != true){
-            return view('SelectOracleLogin');
-        }
-//        $q = "INSERT INTO barang(brg_kode, brg_nama, brg_qty, brg_masuk_dt, brg_masuk_by) VALUES('FAST9999', 'FASTFOOD 99', '2923', '2020-04-20 16:34:50', 'LEO')";
-//
-//        $x = DB::insert($q);
-//        dd($x);
+        $now = Carbon::now();
+        $now = $now->toDateTimeString();
 
         if($_SESSION['database'] == 'postgre'){
             $q1 = "SELECT table_name FROM information_schema.tables WHERE table_schema='".$_SESSION['connection']."' AND table_type='BASE TABLE' ORDER BY table_name ASC";
@@ -136,7 +96,7 @@ class SelectOracleController extends Controller
 
         $connection = $_SESSION['connection'];
 
-        return view('SelectOracleIndex')->with(compact(['tablelist','connection']));
+        return view('SelectOracleIndex')->with(compact(['tablelist','connection','now']));
     }
 
     public function getColumnList(Request $request){

@@ -49,26 +49,16 @@
 <div class="limiter">
     <div class="container-login100">
         <div class="wrap-login100 p-l-85 p-r-85 p-t-55 p-b-55">
-            <span class="login100-form-title text-center">Login Select Oracle</span>
-            <span class="login100-form-title p-b-32 text-center" style="font-size:18">Cabang Semarang</span>
+            <span class="login100-form-title p-b-32 text-center">Login Password Generator</span>
             <span class="txt1 p-b-11">Database</span>
             <div class="wrap-input100 validate-input ">
                 <select class="input100" id="database" data-validate="user" style="text-transform: uppercase;" required>
                     <option value="postgre">POSTGRE</option>
-                    <option value="oracle" selected>ORACLE</option>
+                    <option value="oracle">ORACLE</option>
                 </select>
                 <span class="focus-input100"></span>
             </div>
             <br>
-{{--            <span class="txt1 p-b-11">Cabang</span>--}}
-{{--            <div class="wrap-input100 validate-input ">--}}
-{{--                <select class="input100" id="cabang" data-validate="user" style="text-transform: uppercase;" required>--}}
-{{--                    <option selected disabled>- PILIH CABANG -</option>--}}
-{{--                    <option value="22">22 - SEMARANG</option>--}}
-{{--                </select>--}}
-{{--                <span class="focus-input100"></span>--}}
-{{--            </div>--}}
-{{--            <br>--}}
             <span class="txt1 p-b-11">Username</span>
             <div class="wrap-input100 validate-input ">
                 <input class="input100" type="text" id="username" data-validate="user" style="text-transform: uppercase;" required>
@@ -111,7 +101,6 @@
 
     $('#btn-login').on('click', function () {
         database = $('#database').val();
-        cabang = $('#cabang').val();
         username = $('#username').val().toUpperCase();
         password = $('#password').val();
 
@@ -130,18 +119,15 @@
             $('#lbl-validate-username').text('');
 
             $.ajax({
-                url: '{{ url('select-oracle/login') }}',
+                url: '{{ url('password-generator/login') }}',
                 type: 'POST',
-                data: {"_token": "{{ csrf_token() }}", database: database, cabang: cabang, username: username, password: password},
+                data: {"_token": "{{ csrf_token() }}", database: database, username: username, password: password},
                 beforeSend: function () {
                     $('#modal-loader').modal('toggle');
                 },
                 success: function (response) {
                     if(response == 'success'){
-                        location.href = "{{ url('select-oracle/index') }}";
-                    }
-                    else if(response == 'generate'){
-                        location.href = "{{ url('select-oracle/generate') }}";
+                        location.href = "{{ url('password-generator/index') }}";
                     }
                     else{
                         swal({

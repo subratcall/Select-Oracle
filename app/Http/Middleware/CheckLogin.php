@@ -15,10 +15,7 @@ class CheckLogin
     {
 //        dd($_SESSION['usid']);
         if (isset($_SESSION['login']) && $_SESSION['login'] == true) {
-            if(isset($_SESSION['user']) && $_SESSION['user'] == 'ABC') {
-                return $next($request);
-            }
-            else if(isset($_SESSION['password']) && $_SESSION['password'] == PasswordGeneratorController::get($_SESSION['kodeigr'])){
+            if(isset($_SESSION['password']) && $_SESSION['password'] == PasswordGeneratorController::get($_SESSION['kodeigr'])){
                 return $next($request);
             }
             else{

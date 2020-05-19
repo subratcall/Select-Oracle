@@ -3,18 +3,77 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
+if(!isset($_SESSION)){
+    session_start();
+}
 
 class PasswordGeneratorController extends Controller
 {
+    public function login(Request $request){
+        $database = $request->database;
+        $username = $request->username;
+        $password = $request->password;
+
+
+        $_SESSION['database'] = $database;
+
+        if($database == 'postgre'){
+            if($username == 'ABC' && $password == '123'){
+                $_SESSION['login'] = true;
+                $_SESSION['kodeigr'] = '22';
+                $_SESSION['user'] = $username;
+                $_SESSION['password'] = $password;
+                $_SESSION['connection'] = 'semarang';
+                $_SESSION['status'] = 'generator';
+
+                return 'success';
+            }
+            else{
+                $status = 'failed';
+                $message = 'Username atau password salah!';
+
+                return compact(['status','message']);
+            }
+        }
+        else if($database == 'oracle'){
+            if($username == 'ABC' && $password == '123'){
+                $_SESSION['login'] = true;
+                $_SESSION['kodeigr'] = '22';
+                $_SESSION['user'] = $username;
+                $_SESSION['password'] = $password;
+                $_SESSION['connection'] = 'simsmg';
+                $_SESSION['status'] = 'generator';
+
+                return 'success';
+            }
+            else{
+                $status = 'failed';
+                $message = 'Username atau password salah!';
+
+                return compact(['status','message']);
+            }
+        }
+    }
+
+    public function logout(){
+        session_destroy();
+
+        return redirect('/password-generator/login');
+    }
+
     public function index(){
-        $cabang = $_SESSION['kodeigr'];
-        return view('PasswordGeneratorIndex')->with(compact(['cabang']));
+        if(isset($_SESSION['login']) && $_SESSION['login'] == true)
+            return view('PasswordGeneratorIndex');
+        else return redirect('/password-generator/logout');
     }
 
     public static function generate(Request $request){
-        $cabang = $_SESSION['kodeigr'];
+        $cabang = $request->cabang;
         $jam = $request->jam;
         $tanggal = $request->tanggal;
         $bulan = $request->bulan;
@@ -44,7 +103,33 @@ class PasswordGeneratorController extends Controller
             }
         }
 
-        return $pass;
+        try{
+            DB::connection($_SESSION['connection'])
+                ->table('log_otp')
+                ->insert([
+                    'otp_kodeigr' => $_SESSION['kodeigr'],
+                    'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
+                    'otp_jam' => $jam,
+                    'otp_kode' => $pass,
+                    'otp_user' => $request->user,
+                    'otp_keterangan' => $request->keterangan,
+                    'otp_create_by' => $_SESSION['user'],
+                    'otp_create_dt' => DB::RAW("NOW()")
+                ]);
+        }
+        catch(QueryException $e){
+            $status = 'error';
+            $title = 'Gagal generate password!';
+            $message = $e->getMessage();
+
+            return compact(['status','title','message']);
+        }
+        finally{
+            $status = 'success';
+            $title = 'OTP berhasil digenerate!';
+
+            return compact(['status','title','pass']);
+        }
     }
 
     public static function get($cabang){

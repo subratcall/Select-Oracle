@@ -9,26 +9,26 @@
                     <legend  class="w-auto ml-5">Password Generator</legend>
                     <div class="card-body shadow-lg cardForm">
                         <div class="row text-right">
-                            <div class="col-sm-12">
+                            <div class="col-sm-8">
                                 <div class="form-group row mb-0">
-                                    <label for="cabang" class="col-sm-2 col-form-label">Cabang</label>
-                                    <div class="col-sm-3">
-                                        <input type="text" class="form-control" id="cabang" value="{{ $cabang }}" disabled>
-{{--                                        <select type="text" class="form-control" id="cabang">--}}
-{{--                                            <option value="" selected disabled>- Pilih Cabang -</option>--}}
-{{--                                            <option value="22">22 - SEMARANG</option>--}}
-{{--                                        </select>--}}
+                                    <label for="cabang" class="col-sm-4 col-form-label">Cabang</label>
+                                    <div class="col-sm-6">
+{{--                                        <input type="text" class="form-control" id="cabang" value="{{ $cabang }}" disabled>--}}
+                                        <select type="text" class="form-control" id="cabang">
+                                            <option value="" selected disabled>- Pilih Cabang -</option>
+                                            <option value="22">22 - SEMARANG</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0">
-                                    <label for="tanggal" class="col-sm-2 col-form-label">Tanggal</label>
-                                    <div class="col-sm-3">
+                                    <label for="tanggal" class="col-sm-4 col-form-label">Tanggal</label>
+                                    <div class="col-sm-6">
                                         <input type="text" class="form-control" id="tanggal" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0">
-                                    <label for="jam" class="col-sm-2 col-form-label">Jam</label>
-                                    <div class="col-sm-3">
+                                    <label for="jam" class="col-sm-4 col-form-label">Jam</label>
+                                    <div class="col-sm-6">
                                         <select type="text" class="form-control" id="jam">
                                             <option value="" selected disabled>- Pilih Jam -</option>
                                             <option value="1">1</option>
@@ -58,13 +58,43 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group row mb-0">
+                                    <label for="user" class="col-sm-4 col-form-label">User</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="user" maxlength="3">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-0">
+                                    <label for="keterangan" class="col-sm-4 col-form-label">Keterangan</label>
+                                    <div class="col-sm">
+                                        <input type="text" class="form-control" id="keterangan" maxlength="50">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="text-center border border-danger pt-3 pb-3">
+                                    <h1 id="otp">XXXXXX</h1>
+                                </div>
+                                <div class="form-group row mb-0">
+                                    <div class="col-sm text-center">
+                                        <button class="btn btn-info" id="btn-copy">Copy to clipboard</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </fieldset>
                 <br>
                 <div class="form-group row">
-                    <div class="col-sm-10"></div>
+                    <div class="col-sm-2">
+                        <a href="{{ url('/password-generator/report') }}" target="_blank">
+                            <button class="col-sm btn btn-secondary btn-info" id="btn-report">REPORT</button>
+                        </a>
+                    </div>
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-2">
+                        <button class="col-sm btn btn-secondary btn-success" id="btn-clear">CLEAR</button>
+                    </div>
                     <div class="col-sm-2">
                         <button class="col-sm btn btn-secondary btn-danger" id="btn-generate">GENERATE</button>
                     </div>
@@ -143,6 +173,16 @@
                 minDate : new Date()
             });
             $("#tanggal").datepicker().datepicker("setDate", new Date());
+
+            $('#btn-generate').on('click',function(){
+                generate();
+            });
+
+            $('#keterangan').on('keypress',function(e){
+                if(e.which == 13){
+                    generate();
+                }
+            });
         });
 
         // $("#jam").on('change',function(){
@@ -157,37 +197,99 @@
         //     }
         // });
 
-        $('#btn-generate').on('click',function(){
+
+
+        function generate(){
             date = $('#tanggal').val().split('/');
 
             tanggal = date[0];
             bulan = date[1];
             tahun = date[2];
 
-            $.ajax({
-                url: '{{ url('select-oracle/generate') }}',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    cabang : $('#cabang').val(),
-                    jam : $('#jam').val(),
-                    tanggal : tanggal,
-                    bulan : bulan,
-                    tahun : tahun
-                },
-                beforeSend: function () {
-                    $('#modal-loader').modal('toggle');
-                },
-                success: function (response) {
-                    swal({
-                        title: 'Password : ' + response
-                    }).then(function(){
-                        if($('#modal-loader').is(':visible'))
-                            $('#modal-loader').modal('toggle');
-                    });
-                }
+            if(nvl($('#cabang').val(),'XXX') != 'XXX' && nvl($('#jam').val(), 'XXX') != 'XXX' && nvl($('#user').val(),'XXX') != 'XXX' && nvl($('#cabang').val(),'XXX') != 'XXX'){
+                $.ajax({
+                    url: '{{ url('password-generator/generate') }}',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        cabang : $('#cabang').val(),
+                        jam : $('#jam').val(),
+                        tanggal : tanggal,
+                        bulan : bulan,
+                        tahun : tahun,
+                        keterangan : toUpper($('#keterangan').val()),
+                        user : toUpper($('#user').val())
+                    },
+                    beforeSend: function () {
+                        $('#otp').html('XXXXXX');
+                        $('#modal-loader').modal('toggle');
+                    },
+                    success: function (response) {
+                        $('#otp').html('');
+                        $('#otp').html(response.pass);
+
+                        if(response.status == 'success'){
+                            $('#otp').html(response.pass);
+
+                            swal({
+                                title: response.title,
+                                text: ' ',
+                                icon: 'success',
+                                buttons: false,
+                                timer: 700
+                            }).then(function(){
+                                if($('#modal-loader').is(':visible')) {
+                                    $('#modal-loader').modal('toggle');
+                                }
+                            });
+                        }
+                        else{
+                            $('#otp').html('XXXXXX');
+
+                            swal({
+                                title: response.title,
+                                text: response.message,
+                                icon: 'error'
+                            }).then(function(){
+                                if($('#modal-loader').is(':visible')) {
+                                    $('#modal-loader').modal('toggle');
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                swal({
+                    title: 'Data tidak lengkap!',
+                    icon: 'error'
+                });
+            }
+        }
+
+        $('#btn-clear').on('click',function (){
+            $('#cabang').val('');
+            $('#jam').val('');
+            $('#keterangan').val('');
+            $('#user').val('');
+            $('#otp').html('XXXXXX');
+        });
+
+        $('#btn-copy').on('click',function(){
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($('#otp').text()).select();
+            document.execCommand("copy");
+            $temp.remove();
+
+            swal({
+                title: 'OTP berhasil dicopy!',
+                text: ' ',
+                icon: 'success',
+                buttons: false,
+                timer: 700
             });
         });
     </script>

@@ -17,12 +17,21 @@ Route::get('/select-oracle/login', function(){
 });
 Route::post('/select-oracle/login', 'SelectOracleController@login');
 
-Route::get('/select-oracle/generate', 'PasswordGeneratorController@index')->middleware('CheckLogin');
-Route::post('/select-oracle/generate', 'PasswordGeneratorController@generate')->middleware('CheckLogin');
-
 Route::middleware(['CheckLogin'])->group(function () {
     Route::get('/select-oracle/logout', 'SelectOracleController@logout');
     Route::get('/select-oracle/index', 'SelectOracleController@index');
     Route::post('/select-oracle/execute', 'SelectOracleController@execute');
     Route::post('/select-oracle/getColumnList', 'SelectOracleController@getColumnList');
+});
+
+Route::get('/password-generator/login', function(){
+    return view('PasswordGeneratorLogin');
+});
+Route::post('/password-generator/login','PasswordGeneratorController@login');
+Route::get('/password-generator/logout','PasswordGeneratorController@logout');
+
+Route::get('/password-generator/index', 'PasswordGeneratorController@index');
+Route::post('/password-generator/generate', 'PasswordGeneratorController@generate');
+Route::get('/password-generator/report',function(){
+    return view('PasswordGeneratorReport');
 });

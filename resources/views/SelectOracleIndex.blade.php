@@ -2,9 +2,10 @@
 @section('content')
 
 
-    <div class="container mt-3">
+    <div class="container-fluid mt-3">
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
                 <fieldset>
                     <div class="row">
                         <div class="col-sm-8">
@@ -19,7 +20,9 @@
 
                 </div>
             </div>
-            <div class="col-sm-12">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
                 <fieldset class="card border-secondary">
                     <legend  class="w-auto ml-5">Select Oracle</legend>
                     <div class="card-body shadow-lg cardForm">
@@ -39,7 +42,7 @@
                                 <div class="form-group row mb-0">
                                     <label for="tipe" class="col-sm-2 col-form-label">Tipe</label>
                                     <div class="col-sm-4">
-                                        <select type="text" class="form-control" id="tipe">
+                                        <select type="text" class="form-control selectized text-left" id="tipe">
                                             <option value=""selected disabled>- PILIH TIPE QUERY -</option>
                                             <option value="select">SELECT</option>
                                             <option value="insert">INSERT</option>
@@ -55,7 +58,7 @@
                                     <div class="form-group row mb-0 select-row">
                                         <label for="tabel" class="col-sm-2 col-form-label">Select</label>
                                         <div class="col-sm-4">
-                                            <select type="text" class="form-control column select" onchange="column_onchange(event)">
+                                            <select type="text" class="form-control column select selectized text-left" onchange="column_onchange(event)">
                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
@@ -64,11 +67,27 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div id="update" style="display:none">
+                                    <div class="form-group row mb-0 update-row">
+                                        <label for="tabel" class="col-sm-2 col-form-label">Set</label>
+                                        <div class="col-sm-4">
+                                            <select type="text" class="form-control column update selectized text-left" onchange="column_onchange(event)">
+                                                <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input class="form form-control value" type="text" disabled>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <button class="col-sm-10 btn btn-info" onclick="tambah_update()">+</button>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div id="where" style="display:none">
                                     <div class="form-group row mb-0 where-row">
                                         <label for="tabel" class="col-sm-2 col-form-label">Where</label>
                                         <div class="col-sm-4">
-                                            <select type="text" class="form-control column where" onchange="column_onchange(event)">
+                                            <select type="text" class="form-control column where selectized text-left" onchange="column_onchange(event)">
                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
@@ -96,7 +115,7 @@
                                     <div class="form-group row mb-0 group-row">
                                         <label for="tabel" class="col-sm-2 col-form-label">Group By</label>
                                         <div class="col-sm-4">
-                                            <select type="text" class="form-control column group" onchange="column_onchange(event)">
+                                            <select type="text" class="form-control column group selectized text-left" onchange="column_onchange(event)">
                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
@@ -109,7 +128,7 @@
                                     <div class="form-group row mb-0 order-row">
                                         <label for="tabel" class="col-sm-2 col-form-label">Order By</label>
                                         <div class="col-sm-4">
-                                            <select type="text" class="form-control column order">
+                                            <select type="text" class="form-control column order selectized text-left">
                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                             </select>
                                         </div>
@@ -121,22 +140,6 @@
                                         </div>
                                         <div class="col-sm-1">
                                             <button class="col-sm-10 btn btn-info" onclick="tambah_order()">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="update" style="display:none">
-                                    <div class="form-group row mb-0 update-row">
-                                        <label for="tabel" class="col-sm-2 col-form-label">Set</label>
-                                        <div class="col-sm-4">
-                                            <select type="text" class="form-control column update" onchange="column_onchange(event)">
-                                                <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <input class="form form-control value" type="text" disabled>
-                                        </div>
-                                        <div class="col-sm-1">
-                                            <button class="col-sm-10 btn btn-info" onclick="tambah_update()">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -168,6 +171,7 @@
                     </div>
                 </fieldset>
             </div>
+            <div class="col-sm-1"></div>
         </div>
     </div>
 
@@ -222,6 +226,10 @@
             white-space: nowrap;
         }
 
+        .selectize-dropdown, .selectize-input {
+            line-height: inherit !important;
+        }
+
 
     </style>
 
@@ -230,16 +238,65 @@
             $('#header-tanggal').append(now());
 
             $('#tabel').selectize();
+            $('#tipe').selectize();
+
+            currentTime = new Date();
+            const hour = currentTime.getHours();
+
+            checkLoginStatus(hour);
         });
+
+        function checkLoginStatus(hour) {
+            window.setInterval(function(){
+                date = new Date();
+
+                refreshTime();
+
+                if(hour != date.getHours()){
+                    location.reload();
+                }
+                else{
+                    console.log('sama');
+                }
+            }, 1000);
+        }
 
         columnlist = '';
         result = '';
         column = [];
 
-        function now(){
-            date = new Date();
+        function refreshTime() {
+            tanggal = $('#header-tanggal').html().substr(0, $('#header-tanggal').html().length - 8);
+            time = $('#header-tanggal').html().substr(-8);
+            time = time.split(':');
+            h = time[0];
+            m = time[1];
+            s = time[2];
 
-            var d = new Date();
+            s = parseInt(s) + 1;
+
+            if(s == 60){
+                s = '00';
+                m = parseInt(m) + 1;
+
+                if(m == 60){
+                    m = '00';
+                    h = parseInt(h) + 1;
+                }
+            }
+
+            if(s < 10 && s != '00')
+                s = '0' + s;
+
+            if(m < 10 && m != '00')
+                m = '0' + m;
+
+            $('#header-tanggal').html(tanggal + h + ':' + m + ':' + s);
+        }
+
+        function now(){
+            date = new Date('{{ $now }}');
+
             var weekday = new Array(7);
             weekday[0] = "Minggu";
             weekday[1] = "Senin";
@@ -257,7 +314,16 @@
                 bln = '0' + bln;
             thn = date.getFullYear();
 
-            return hari+', '+tgl+'/'+bln+'/'+thn;
+            jam = date.getHours();
+            menit = date.getMinutes();
+            detik = date.getSeconds();
+
+            if(detik < 10)
+                detik = '0' + detik;
+            if(menit < 10)
+                menit = '0' + menit;
+
+            return hari+', '+tgl+'/'+bln+'/'+thn+' '+jam+':'+menit+':'+detik;
         }
 
         $('#tipe').on('change',function(){
@@ -393,6 +459,13 @@
                         $('.tanggal').datepicker({
                             "dateFormat" : "dd/mm/yy"
                         });
+
+                        $('.select').selectize();
+                        $('.where').selectize();
+                        $('.update').selectize();
+                        $('.group').selectize();
+                        $('.order').selectize();
+
                     }
                 });
             }

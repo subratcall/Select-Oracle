@@ -7,7 +7,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- CSS -->
-    {{--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">--}}
     <link href={{ asset('css/bootstrap.min.css') }} rel="stylesheet">
     <link href={{ asset('css/datatables.css') }} rel="stylesheet">
     <link href={{ asset('css/datatables_bootstrap.css') }} rel="stylesheet">
@@ -50,38 +49,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-{{--                <li class="nav-item dropdown">--}}
-{{--                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"--}}
-{{--                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
-{{--                        Master--}}
-{{--                    </a>--}}
-{{--                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">--}}
-{{--                        <!-- TARO URUT BERDASARKAN ABJAD-->--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstaktifallhrgjual/index")}}">Aktifkan Harga Jual All Item</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstaktifhrgjual/index")}}">Aktifkan Harga Jual Per Item</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstinformasihistoryproduct/index")}}">Informasi dan History Product</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstapproval/index")}}">Master Approval</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstbarang/index")}}">Master Barang</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstbarcode/index")}}">Master Barcode</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstcabang/index")}}">Master Cabang</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstdepartement/index")}}">Master Departement</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstdivisi/index")}}">Master Divisi</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/msthargabeli/index")}}">Master Harga Beli</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstharilibur/index")}}">Master Hari Libur</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstjenisitem/index")}}">Master Jenis Item</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstkategoribarang/index")}}">Master Kategori Barang</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstkategoritoko/index")}}">Master Kategori Toko</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstkubikasiplano/index")}}">Master Kubikasi Plano</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstlokasi/index")}}">Master Lokasi</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstmember/index")}}">Master Member</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstomi/index")}}">Master OMI</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstoutlet/index")}}">Master Outlet</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstperusahaan/index")}}">Master Perusahaan</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstsuboutlet/index")}}">Master Sub Outlet</a>--}}
-{{--                        <a class="dropdown-item" href="{{url("/mstsupplier/index")}}">Master Supplier</a>--}}
-
-{{--                    </div>--}}
-{{--                </li>--}}
             </div>
         </div>
         <div class="navbar-nav" style="margin-right: 200px;">
@@ -91,7 +58,11 @@
                     {{ $_SESSION['user'] }}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    @if($_SESSION['status'] == 'select')
                     <a class="dropdown-item" href="{{url("/select-oracle/logout")}}">Logout</a>
+                    @else
+                    <a class="dropdown-item" href="{{url("/password-generator/logout")}}">Logout</a>
+                    @endif
                 </div>
             </li>
         </div>
