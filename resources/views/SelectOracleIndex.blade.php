@@ -54,6 +54,33 @@
                                 <div id="insert" style="display:none">
 
                                 </div>
+                                <div id="tab" style="display:none">
+                                    <ul class="nav nav-tabs custom-color" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="btn-select-otomatis" data-toggle="tab" href="#otomatis">OTOMATIS</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="btn-select-manual" data-toggle="tab" href="#manual">MANUAL</a>
+                                        </li>
+                                    </ul>
+                                    <br>
+                                    <div class="tab-content">
+                                        <div id="manual" class="container tab-pane pl-0 pr-0 fix-height">
+                                            <div class="card-body ">
+                                                <div class="row text-right">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group row mb-0">
+                                                            <label for="query-manual" class="col-sm-2 col-form-label">Query</label>
+                                                            <div class="col-sm-8">
+                                                                <textarea type="number" class="form-control diisi" id="query-manual"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div id="select" style="display:none">
                                     <div class="form-group row mb-0 select-row">
                                         <label for="tabel" class="col-sm-2 col-form-label">Select</label>
@@ -261,6 +288,8 @@
             }, 1000);
         }
 
+
+
         columnlist = '';
         result = '';
         column = [];
@@ -269,9 +298,9 @@
             tanggal = $('#header-tanggal').html().substr(0, $('#header-tanggal').html().length - 8);
             time = $('#header-tanggal').html().substr(-8);
             time = time.split(':');
-            h = time[0];
-            m = time[1];
-            s = time[2];
+            h = parseInt(time[0]);
+            m = parseInt(time[1]);
+            s = parseInt(time[2]);
 
             s = parseInt(s) + 1;
 
@@ -326,6 +355,30 @@
             return hari+', '+tgl+'/'+bln+'/'+thn+' '+jam+':'+menit+':'+detik;
         }
 
+        $('#btn-select-otomatis').on('click',function(){
+            $('#manual').hide();
+
+            $('#tab').show();
+            $('#select').show();
+            $('#where').show();
+            $('#group').show();
+            $('#order').show();
+            $('#insert').hide();
+            $('#update').hide();
+            $('#field-result').show();
+        });
+
+        $('#btn-select-manual').on('click',function(){
+            $('#manual').show();
+
+            $('#select').hide();
+            $('#where').hide();
+            $('#group').hide();
+            $('#order').hide();
+            $('#insert').hide();
+            $('#update').hide();
+        });
+
         $('#tipe').on('change',function(){
             $('#select').find('input').val('');
             $('#where').find('input').val('');
@@ -335,6 +388,7 @@
             $('#update').find('input').val('');
 
             if($(this).val() == 'select'){
+                $('#tab').show();
                 $('#select').show();
                 $('#where').show();
                 $('#group').show();
@@ -344,6 +398,7 @@
                 $('#field-result').show();
             }
             else if($(this).val() == 'delete'){
+                $('#tab').hide();
                 $('#where').show();
                 $('#select').hide();
                 $('#group').hide();
@@ -353,6 +408,7 @@
                 $('#field-result').hide();
             }
             else if($(this).val() == 'insert'){
+                $('#tab').hide();
                 $('#insert').show();
                 $('#select').hide();
                 $('#where').hide();
@@ -362,6 +418,7 @@
                 $('#field-result').hide();
             }
             else if($(this).val() == 'update'){
+                $('#tab').hide();
                 $('#where').show();
                 $('#update').show();
                 $('#insert').hide();
@@ -371,6 +428,7 @@
                 $('#field-result').hide();
             }
             else{
+                $('#tab').hide();
                 $('#where').hide();
                 $('#update').hide();
                 $('#insert').hide();
@@ -508,7 +566,7 @@
             html = '<div class="form-group row mb-0 select-row">' +
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
-                '<select type="text" class="form-control column select" onchange="column_onchange(event)">' +
+                '<select type="text" class="form-control column select selectized text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
@@ -523,13 +581,18 @@
                 '</div>';
 
             $('#select').append(html);
+            $('#select').find('.select').each(function(){
+                if(!$(this).hasClass('selectized')){
+                    $(this).selectize();
+                }
+            });
         }
 
         function tambah_where(){
             html = '<div class="form-group row mb-0 where-row">' +
                     '<div class="col-sm-2"></div>' +
                     '<div class="col-sm-4">' +
-                        '<select type="text" class="form-control column where" onchange="column_onchange(event)">' +
+                        '<select type="text" class="form-control column where selectized text-left" onchange="column_onchange(event)">' +
                             '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
@@ -565,7 +628,7 @@
             html = '<div class="form-group row mb-0 group-row">' +
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
-                '<select type="text" class="form-control column group" onchange="column_onchange(event)">' +
+                '<select type="text" class="form-control column group selectized text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
@@ -586,7 +649,7 @@
             html = '<div class="form-group row mb-0 order-row">' +
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
-                '<select type="text" class="form-control column order" onchange="column_onchange(event)">' +
+                '<select type="text" class="form-control column order selectized text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
@@ -613,7 +676,7 @@
             html = '<div class="form-group row mb-0 update-row">' +
                 '<div class="col-sm-2"></div>' +
                 '<div class="col-sm-4">' +
-                '<select type="text" class="form-control column update" onchange="column_onchange(event)">' +
+                '<select type="text" class="form-control column update selectized text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
@@ -676,73 +739,78 @@
                     tipe = $('#tipe').val();
                     tabel = $('#tabel').val();
                     if(tipe == 'select'){
-                        query = 'SELECT ';
+                        if(!$('#manual').is(':visible')){
+                            query = 'SELECT ';
 
-                        $('.select-row').each(function(){
-                            if(select.length == 0){
-                                select = $(this).find('.select').val();
+                            $('.select-row').each(function(){
+                                if(select.length == 0){
+                                    select = $(this).find('.select').val();
 
-                                if($(this).find('.select').val() != '*'){
-                                    column = [];
-                                }
-                            }
-                            else{
-                                select += ', ' + $(this).find('.select').val();
-                            }
-                            if($(this).find('.select').val() != '*') {
-                                column.push($(this).find('.select').val());
-                            }
-                            else{
-                                column = columnlist;
-                            }
-                        });
-
-                        query += select;
-                        query += ' FROM ' + $('#tabel').val();
-
-
-                        $('.where-row').each(function(){
-                            if($(this).find('.where').val() != null && $(this).find('.where').val() != '*'){
-                                if(where.length == 0){
-                                    where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                    if($(this).find('.select').val() != '*'){
+                                        column = [];
+                                    }
                                 }
                                 else{
-                                    where += " AND " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
+                                    select += ', ' + $(this).find('.select').val();
                                 }
-                            }
-                        });
+                                if($(this).find('.select').val() != '*') {
+                                    column.push($(this).find('.select').val());
+                                }
+                                else{
+                                    column = columnlist;
+                                }
+                            });
 
-                        query += where;
+                            query += select;
+                            query += ' FROM ' + $('#tabel').val();
 
-                        $('.group-row').each(function(){
-                            if($(this).find('.group').val() != null) {
-                                if($(this).find('.group').val() != '*'){
-                                    if(group.length == 0){
-                                        group = ' GROUP BY ' + $(this).find('.group').val();
+
+                            $('.where-row').each(function(){
+                                if($(this).find('.where').val() != null && $(this).find('.where').val() != '*'){
+                                    if(where.length == 0){
+                                        where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
                                     }
                                     else{
-                                        group += ', ' + $(this).find('.group').val();
+                                        where += " AND " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
                                     }
                                 }
-                            }
-                        });
+                            });
 
-                        query += group;
+                            query += where;
 
-                        $('.order-row').each(function(){
-                            if($(this).find('.order').val() != null) {
-                                if($(this).find('.order').val() != '*'){
-                                    if(order.length == 0){
-                                        order = ' ORDER BY ' + $(this).find('.order').val() + ' ' + $(this).find('.direction').val();
-                                    }
-                                    else{
-                                        order += ', ' + $(this).find('.order').val();
+                            $('.group-row').each(function(){
+                                if($(this).find('.group').val() != null) {
+                                    if($(this).find('.group').val() != '*'){
+                                        if(group.length == 0){
+                                            group = ' GROUP BY ' + $(this).find('.group').val();
+                                        }
+                                        else{
+                                            group += ', ' + $(this).find('.group').val();
+                                        }
                                     }
                                 }
-                            }
-                        });
+                            });
 
-                        query += order;
+                            query += group;
+
+                            $('.order-row').each(function(){
+                                if($(this).find('.order').val() != null) {
+                                    if($(this).find('.order').val() != '*'){
+                                        if(order.length == 0){
+                                            order = ' ORDER BY ' + $(this).find('.order').val() + ' ' + $(this).find('.direction').val();
+                                        }
+                                        else{
+                                            order += ', ' + $(this).find('.order').val();
+                                        }
+                                    }
+                                }
+                            });
+
+                            query += order;
+                        }
+                        else{
+                            query = $('#query-manual').val();
+                        }
                     }
                     else if(tipe == 'insert'){
                         query = 'INSERT INTO ' + $('#tabel').val() + '(';

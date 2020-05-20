@@ -7,6 +7,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 if(!isset($_SESSION)){
     session_start();
@@ -177,5 +178,69 @@ class PasswordGeneratorController extends Controller
         if($a > 0)
             return $a;
         else return $b;
+    }
+
+    public function report(){
+        $tanggal = $_GET['tanggal'];
+        $data = '';
+
+        if(strlen($tanggal) != '10')
+            return '<h1 style="text-align: center">Record Password Generator tidak ditemukan!</h1>';
+
+        if($_SESSION['database'] == 'postgre') {
+            $data = DB::table('log_otp')
+                ->select('*')
+                ->where('otp_create_dt','>=',DB::RAW("to_timestamp('".$tanggal."','dd-mm-yyyy')"))
+                ->where('otp_create_dt','<=',DB::RAW("to_timestamp('".$tanggal." 23:59:59','dd-mm-yyyy hh24:mi:ss')"))
+                ->orderBy('otp_create_dt', 'asc')
+                ->get();
+        }
+        else{
+            $data = DB::table('log_otp')
+                ->select('*')
+                ->where('otp_create_dt', DB::RAW("to_date('".$tanggal."','dd-mm-yyyy')"))
+                ->orderBy('otp_create_dt', 'asc')
+                ->get();
+        }
+
+        if(count($data) == 0)
+            return '<h1 style="text-align: center">Record Password Generator tidak ditemukan!</h1>';
+        else{
+            $bulan = array(
+                'Januari', 'Februri', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            );
+
+            $periode = substr($tanggal, 0, 2) . ' ' . $bulan[(int)substr($tanggal, 3, 2) - 1] . ' ' . substr($tanggal, 5, 4);
+
+            $data = [
+                'tanggal' => $tanggal,
+                'record' => $data
+            ];
+
+            $now = Carbon::now('Asia/Jakarta');
+            $now = date_format($now, 'd-m-Y H-i-s');
+
+            $dompdf = new PDF();
+
+//            dd($data);
+
+            $pdf = PDF::loadview('PasswordGeneratorReportView', $data);
+
+            error_reporting(E_ALL ^ E_DEPRECATED);
+
+            $pdf->output();
+            $dompdf = $pdf->getDomPDF()->set_option("enable_php", true);
+
+            $canvas = $dompdf ->get_canvas();
+            $canvas->page_text(1000, 10, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 8, array(0, 0, 0));
+
+            $dompdf = $pdf;
+
+            // (Optional) Setup the paper size and orientation
+            //        $dompdf->setPaper('a4', 'landscape');
+
+            // Render the HTML as PDF
+            return $dompdf->stream('Report' . $now . '.pdf');
+        }
     }
 }

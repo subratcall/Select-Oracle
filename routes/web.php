@@ -33,5 +33,7 @@ Route::get('/password-generator/logout','PasswordGeneratorController@logout');
 Route::get('/password-generator/index', 'PasswordGeneratorController@index');
 Route::post('/password-generator/generate', 'PasswordGeneratorController@generate');
 Route::get('/password-generator/report',function(){
+    session_start();
     return view('PasswordGeneratorReport');
 });
+Route::get('/password-generator/show-report','PasswordGeneratorController@report');
