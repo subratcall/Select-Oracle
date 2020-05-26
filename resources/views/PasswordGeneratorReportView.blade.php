@@ -13,9 +13,9 @@ $datetime->setTimezone($timezone);
 ?>
 <header>
     <div style="float:left; margin-top: 0px; line-height: 8px !important;">
-        <p> INDOGROSIR <br><br>
-            SEMARANG<br><br>
-            JAWA TENGAH</p>
+        <p>{{ $perusahaan->prs_namaperusahaan }}<br><br>
+            {{ $perusahaan->prs_namacabang }}<br><br>
+            {{ $perusahaan->prs_namaregional }}</p>
     </div>
     <div style="float:right; margin-top: 0px; line-height: 8px !important;">
         <p>TGL : {{ date("d-m-Y") }}<br><br>

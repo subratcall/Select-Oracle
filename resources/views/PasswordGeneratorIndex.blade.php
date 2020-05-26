@@ -256,6 +256,10 @@
                                 if($('#modal-loader').is(':visible')) {
                                     $('#modal-loader').modal('toggle');
                                 }
+
+                                if(response.title == 'User tidak memiliki hak akses!'){
+                                    location.reload();
+                                }
                             });
                         }
                     }

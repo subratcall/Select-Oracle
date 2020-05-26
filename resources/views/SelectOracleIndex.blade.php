@@ -282,9 +282,6 @@
                 if(hour != date.getHours()){
                     location.reload();
                 }
-                else{
-                    console.log('sama');
-                }
             }, 1000);
         }
 

@@ -68,12 +68,19 @@ class PasswordGeneratorController extends Controller
     }
 
     public function index(){
-        if(isset($_SESSION['login']) && $_SESSION['login'] == true)
+        if(isset($_SESSION['login']) && $_SESSION['login'] == true && $_SESSION['user'] == 'ABC')
             return view('PasswordGeneratorIndex');
         else return redirect('/password-generator/logout');
     }
 
     public static function generate(Request $request){
+        if($_SESSION['user'] != 'ABC'){
+            $status = 'error';
+            $title = 'User tidak memiliki hak akses!';
+
+            return compact(['status','title']);
+        }
+
         $cabang = $request->cabang;
         $jam = $request->jam;
         $tanggal = $request->tanggal;
@@ -266,14 +273,17 @@ class PasswordGeneratorController extends Controller
                     ->first();
             }
             else{
-//                $perusahaan = [
-//                    ''
-//                ]
+                $perusahaan = (object) [
+                    'prs_namaperusahaan' => 'PT. INDOGROSIR',
+                    'prs_namacabang' => 'SEMARANG',
+                    'prs_namaregional' => 'JAWA TENGAH'
+                ];
             }
 
             $data = [
                 'tanggal' => $tanggal,
-                'record' => $data
+                'record' => $data,
+                'perusahaan' => $perusahaan
             ];
 
             $now = Carbon::now('Asia/Jakarta');
