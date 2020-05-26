@@ -104,44 +104,75 @@ class PasswordGeneratorController extends Controller
             }
         }
 
-        try{
-            if($_SESSION['database'] == 'postgre'){
-                DB::connection($_SESSION['connection'])
-                    ->table('log_otp')
-                    ->insert([
-                        'otp_kodeigr' => $_SESSION['kodeigr'],
-                        'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
-                        'otp_jam' => $jam,
-                        'otp_kode' => $pass,
-                        'otp_user' => $request->user,
-                        'otp_keterangan' => $request->keterangan,
-                        'otp_create_by' => $_SESSION['user'],
-                        'otp_create_dt' => DB::RAW("NOW()")
-                    ]);
-            }
-            else{
-                DB::connection($_SESSION['connection'])
-                    ->table('log_otp')
-                    ->insert([
-                        'otp_kodeigr' => $_SESSION['kodeigr'],
-                        'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
-                        'otp_jam' => $jam,
-                        'otp_kode' => $pass,
-                        'otp_user' => $request->user,
-                        'otp_keterangan' => $request->keterangan,
-                        'otp_create_by' => $_SESSION['user'],
-                        'otp_create_dt' => DB::RAW("SYSDATE")
-                    ]);
-            }
-        }
-        catch(QueryException $e){
-            $status = 'error';
-            $title = 'Gagal generate password!';
-            $message = $e->getMessage();
+        $otp_tanggal = $tanggal.'/'.$bulan.'/'.$tahun;
 
-            return compact(['status','title','message']);
+        if($_SESSION['database'] == 'postgre'){
+            $data = DB::connection($_SESSION['connection'])
+                ->table('log_otp')
+                ->select('*')
+                ->where('otp_kodeigr',$_SESSION['kodeigr'])
+                ->where('otp_tanggal',DB::RAW("to_date('".$otp_tanggal."','DD/MM/YYYY')"))
+                ->where('otp_jam',$jam)
+                ->where('otp_kode',$pass)
+                ->first();
         }
-        finally{
+        else{
+            $data = DB::connection($_SESSION['connection'])
+                ->table('log_otp')
+                ->select('*')
+                ->where('otp_kodeigr',$_SESSION['kodeigr'])
+                ->whereRaw("trunc(otp_tanggal) = to_date('".$otp_tanggal."','DD/MM/YYYY')")
+                ->where('otp_jam',$jam)
+                ->where('otp_kode',$pass)
+                ->first();
+        }
+
+        if(is_null($data)){
+            try{
+                if($_SESSION['database'] == 'postgre'){
+                    DB::connection($_SESSION['connection'])
+                        ->table('log_otp')
+                        ->insert([
+                            'otp_kodeigr' => $_SESSION['kodeigr'],
+                            'otp_tanggal' => $otp_tanggal,
+                            'otp_jam' => $jam,
+                            'otp_kode' => $pass,
+                            'otp_user' => $request->user,
+                            'otp_keterangan' => $request->keterangan,
+                            'otp_create_by' => $_SESSION['user'],
+                            'otp_create_dt' => DB::RAW("NOW()")
+                        ]);
+                }
+                else{
+                    DB::connection($_SESSION['connection'])
+                        ->table('log_otp')
+                        ->insert([
+                            'otp_kodeigr' => $_SESSION['kodeigr'],
+                            'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
+                            'otp_jam' => $jam,
+                            'otp_kode' => $pass,
+                            'otp_user' => $request->user,
+                            'otp_keterangan' => $request->keterangan,
+                            'otp_create_by' => $_SESSION['user'],
+                            'otp_create_dt' => DB::RAW("SYSDATE")
+                        ]);
+                }
+            }
+            catch(QueryException $e){
+                $status = 'error';
+                $title = 'Gagal generate password!';
+                $message = $e->getMessage();
+
+                return compact(['status','title','message']);
+            }
+            finally{
+                $status = 'success';
+                $title = 'OTP berhasil digenerate!';
+
+                return compact(['status','title','pass']);
+            }
+        }
+        else{
             $status = 'success';
             $title = 'OTP berhasil digenerate!';
 

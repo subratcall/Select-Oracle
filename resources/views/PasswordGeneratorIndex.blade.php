@@ -87,7 +87,7 @@
                 <br>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        <a href="{{ url('/password-generator/report') }}" target="_blank">
+                        <a href="{{ url('/password-generator/report') }}">
                             <button class="col-sm btn btn-secondary btn-info" id="btn-report">REPORT</button>
                         </a>
                     </div>

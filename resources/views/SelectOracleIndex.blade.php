@@ -538,7 +538,7 @@
                 $('.value').each(function(){
                     if($(this).hasClass('hasDatepicker')){
                         $(this).datepicker('destroy');
-                        // $(this).removeClass('hasDatepicker');
+                        $(this).removeClass('hasDatepicker');
                     }
                 })
                 for(i=0;i<arrColumn.length;i++){
@@ -546,6 +546,9 @@
                         $(event.target).parent().parent().find('.value').datepicker({
                             "dateFormat" : "dd/mm/yy"
                         });
+                    }
+                    else{
+                        $(event.target).parent().parent().find('.value').datepicker('destroy');
                     }
                     if(toLower(arrColumn[i]['column_name']) == $(event.target).val()){
                         $(event.target).parent().parent().find('.value').prop('maxlength',nvl(arrColumn[i]['data_length'],999));

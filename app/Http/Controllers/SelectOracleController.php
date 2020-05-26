@@ -117,7 +117,8 @@ class SelectOracleController extends Controller
                             else data_type
                         end as data_type,
                         data_length
-                        FROM USER_TAB_COLUMNS WHERE table_name = '".$request->table."'";
+                        FROM USER_TAB_COLUMNS WHERE table_name = '".$request->table."'
+                        ORDER BY column_id";
         }
 
         $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
@@ -137,6 +138,13 @@ class SelectOracleController extends Controller
 
         $ok = false;
         $tipe = $arr[0];
+
+        if(strtolower($arr[0]) != 'select'){
+            $status = 'error';
+            $message = 'Hanya query SELECT yang diperbolehkan!';
+
+            return compact(['status','message']);
+        }
 
 
         for($i=0;$i<count($arr);$i++){
