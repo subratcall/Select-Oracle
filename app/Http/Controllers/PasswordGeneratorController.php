@@ -214,7 +214,7 @@ class PasswordGeneratorController extends Controller
         else{
             $data = DB::table('log_otp')
                 ->select('*')
-                ->where('otp_create_dt', DB::RAW("to_date('".$tanggal."','dd-mm-yyyy')"))
+                ->whereRaw("trunc(otp_create_dt) = to_date('".$tanggal."','dd-mm-yyyy')")
                 ->orderBy('otp_create_dt', 'asc')
                 ->get();
         }
