@@ -204,7 +204,8 @@ class PasswordGeneratorController extends Controller
             return '<h1 style="text-align: center">Record Password Generator tidak ditemukan!</h1>';
 
         if($_SESSION['database'] == 'postgre') {
-            $data = DB::table('log_otp')
+            $data = DB::connection($_SESSION['connection'])
+                ->table('log_otp')
                 ->select('*')
                 ->where('otp_create_dt','>=',DB::RAW("to_timestamp('".$tanggal."','dd-mm-yyyy')"))
                 ->where('otp_create_dt','<=',DB::RAW("to_timestamp('".$tanggal." 23:59:59','dd-mm-yyyy hh24:mi:ss')"))
@@ -212,7 +213,8 @@ class PasswordGeneratorController extends Controller
                 ->get();
         }
         else{
-            $data = DB::table('log_otp')
+            $data = DB::connection($_SESSION['connection'])
+                ->table('log_otp')
                 ->select('*')
                 ->whereRaw("trunc(otp_create_dt) = to_date('".$tanggal."','dd-mm-yyyy')")
                 ->orderBy('otp_create_dt', 'asc')
