@@ -542,15 +542,16 @@
                     }
                 })
                 for(i=0;i<arrColumn.length;i++){
-                    if(toLower(arrColumn[i]['data_type']) == 'timestamp without time zone' || toLower(arrColumn[i]['data_type']) =='date'){
-                        $(event.target).parent().parent().find('.value').datepicker({
-                            "dateFormat" : "dd/mm/yy"
-                        });
-                    }
-                    else{
-                        $(event.target).parent().parent().find('.value').datepicker('destroy');
-                    }
-                    if(toLower(arrColumn[i]['column_name']) == $(event.target).val()){
+                    if(toLower(arrColumn[i]['column_name']) == toLower($(event.target).val())){
+                        if(toLower(arrColumn[i]['data_type']) == 'timestamp without time zone' || toLower(arrColumn[i]['data_type']) =='date'){
+                            $(event.target).parent().parent().find('.value').datepicker({
+                                "dateFormat" : "dd/mm/yy"
+                            });
+                        }
+                        else{
+                            $(event.target).parent().parent().find('.value').datepicker('destroy');
+                        }
+
                         $(event.target).parent().parent().find('.value').prop('maxlength',nvl(arrColumn[i]['data_length'],999));
                         break;
                     }

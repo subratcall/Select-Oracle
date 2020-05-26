@@ -148,7 +148,7 @@ class PasswordGeneratorController extends Controller
                         ->table('log_otp')
                         ->insert([
                             'otp_kodeigr' => $_SESSION['kodeigr'],
-                            'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
+                            'otp_tanggal' => DB::RAW("to_date('".$otp_tanggal."','DD/MM/YYYY')"),
                             'otp_jam' => $jam,
                             'otp_kode' => $pass,
                             'otp_user' => $request->user,
@@ -260,6 +260,16 @@ class PasswordGeneratorController extends Controller
             );
 
             $periode = substr($tanggal, 0, 2) . ' ' . $bulan[(int)substr($tanggal, 3, 2) - 1] . ' ' . substr($tanggal, 5, 4);
+
+            if($_SESSION['database'] == 'oracle'){
+                $perusahaan = DB::connection($_SESSION['connection'])->table('tbmaster_perusahaan')
+                    ->first();
+            }
+            else{
+//                $perusahaan = [
+//                    ''
+//                ]
+            }
 
             $data = [
                 'tanggal' => $tanggal,
