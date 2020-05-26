@@ -105,18 +105,34 @@ class PasswordGeneratorController extends Controller
         }
 
         try{
-            DB::connection($_SESSION['connection'])
-                ->table('log_otp')
-                ->insert([
-                    'otp_kodeigr' => $_SESSION['kodeigr'],
-                    'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
-                    'otp_jam' => $jam,
-                    'otp_kode' => $pass,
-                    'otp_user' => $request->user,
-                    'otp_keterangan' => $request->keterangan,
-                    'otp_create_by' => $_SESSION['user'],
-                    'otp_create_dt' => DB::RAW("NOW()")
-                ]);
+            if($_SESSION['database'] == 'postgre'){
+                DB::connection($_SESSION['connection'])
+                    ->table('log_otp')
+                    ->insert([
+                        'otp_kodeigr' => $_SESSION['kodeigr'],
+                        'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
+                        'otp_jam' => $jam,
+                        'otp_kode' => $pass,
+                        'otp_user' => $request->user,
+                        'otp_keterangan' => $request->keterangan,
+                        'otp_create_by' => $_SESSION['user'],
+                        'otp_create_dt' => DB::RAW("NOW()")
+                    ]);
+            }
+            else{
+                DB::connection($_SESSION['connection'])
+                    ->table('log_otp')
+                    ->insert([
+                        'otp_kodeigr' => $_SESSION['kodeigr'],
+                        'otp_tanggal' => $tanggal.'/'.$bulan.'/'.$tahun,
+                        'otp_jam' => $jam,
+                        'otp_kode' => $pass,
+                        'otp_user' => $request->user,
+                        'otp_keterangan' => $request->keterangan,
+                        'otp_create_by' => $_SESSION['user'],
+                        'otp_create_dt' => DB::RAW("SYSDATE")
+                    ]);
+            }
         }
         catch(QueryException $e){
             $status = 'error';
