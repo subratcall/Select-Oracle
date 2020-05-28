@@ -140,7 +140,7 @@ class PasswordGeneratorController extends Controller
                     DB::connection($_SESSION['connection'])
                         ->table('log_otp')
                         ->insert([
-                            'otp_kodeigr' => $_SESSION['kodeigr'],
+                            'otp_kodeigr' => $request->cabang,
                             'otp_tanggal' => $otp_tanggal,
                             'otp_jam' => $jam,
                             'otp_kode' => $pass,
@@ -154,7 +154,7 @@ class PasswordGeneratorController extends Controller
                     DB::connection($_SESSION['connection'])
                         ->table('log_otp')
                         ->insert([
-                            'otp_kodeigr' => $_SESSION['kodeigr'],
+                            'otp_kodeigr' => $request->cabang,
                             'otp_tanggal' => DB::RAW("to_date('".$otp_tanggal."','DD/MM/YYYY')"),
                             'otp_jam' => $jam,
                             'otp_kode' => $pass,
@@ -236,27 +236,51 @@ class PasswordGeneratorController extends Controller
 
     public function report(){
         $tanggal = $_GET['tanggal'];
+        $order = $_GET['order'];
         $data = '';
 
         if(strlen($tanggal) != '10')
             return '<h1 style="text-align: center">Record Password Generator tidak ditemukan!</h1>';
 
         if($_SESSION['database'] == 'postgre') {
-            $data = DB::connection($_SESSION['connection'])
-                ->table('log_otp')
-                ->select('*')
-                ->where('otp_create_dt','>=',DB::RAW("to_timestamp('".$tanggal."','dd-mm-yyyy')"))
-                ->where('otp_create_dt','<=',DB::RAW("to_timestamp('".$tanggal." 23:59:59','dd-mm-yyyy hh24:mi:ss')"))
-                ->orderBy('otp_create_dt', 'asc')
-                ->get();
+            if($order == 'jam'){
+                $data = DB::connection($_SESSION['connection'])
+                    ->table('log_otp')
+                    ->select('*')
+                    ->where('otp_create_dt','>=',DB::RAW("to_timestamp('".$tanggal."','dd-mm-yyyy')"))
+                    ->where('otp_create_dt','<=',DB::RAW("to_timestamp('".$tanggal." 23:59:59','dd-mm-yyyy hh24:mi:ss')"))
+                    ->orderBy('otp_jam', 'asc')
+                    ->get();
+            }
+            else{
+                $data = DB::connection($_SESSION['connection'])
+                    ->table('log_otp')
+                    ->select('*')
+                    ->where('otp_create_dt','>=',DB::RAW("to_timestamp('".$tanggal."','dd-mm-yyyy')"))
+                    ->where('otp_create_dt','<=',DB::RAW("to_timestamp('".$tanggal." 23:59:59','dd-mm-yyyy hh24:mi:ss')"))
+                    ->orderBy('otp_kodeigr','asc')
+                    ->orderBy('otp_jam','asc')
+                    ->get();
+            }
         }
         else{
-            $data = DB::connection($_SESSION['connection'])
-                ->table('log_otp')
-                ->select('*')
-                ->whereRaw("trunc(otp_create_dt) = to_date('".$tanggal."','dd-mm-yyyy')")
-                ->orderBy('otp_create_dt', 'asc')
-                ->get();
+            if($order == 'jam'){
+                $data = DB::connection($_SESSION['connection'])
+                    ->table('log_otp')
+                    ->select('*')
+                    ->whereRaw("trunc(otp_create_dt) = to_date('".$tanggal."','dd-mm-yyyy')")
+                    ->orderBy('otp_jam', 'asc')
+                    ->get();
+            }
+            else{
+                $data = DB::connection($_SESSION['connection'])
+                    ->table('log_otp')
+                    ->select('*')
+                    ->whereRaw("trunc(otp_create_dt) = to_date('".$tanggal."','dd-mm-yyyy')")
+                    ->orderBy('otp_kodeigr','asc')
+                    ->orderBy('otp_jam','asc')
+                    ->get();
+            }
         }
 
         if(count($data) == 0)
@@ -283,7 +307,8 @@ class PasswordGeneratorController extends Controller
             $data = [
                 'tanggal' => $tanggal,
                 'record' => $data,
-                'perusahaan' => $perusahaan
+                'perusahaan' => $perusahaan,
+                'order' => $order
             ];
 
             $now = Carbon::now('Asia/Jakarta');

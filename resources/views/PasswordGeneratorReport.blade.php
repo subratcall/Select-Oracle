@@ -16,13 +16,27 @@
                                         <input type="text" class="form-control" id="tanggal" readonly>
                                     </div>
                                 </div>
+                                <div class="form-group row mb-0">
+                                    <label for="order" class="col-sm-4 col-form-label">Order By</label>
+                                    <div class="col-sm-6">
+                                        <select type="text" class="form-control" id="order">
+                                            <option value="cabang" selected>Cabang</option>
+                                            <option value="jam">Jam</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </fieldset>
                 <br>
                 <div class="form-group row">
-                    <div class="col-sm-10"></div>
+                    <div class="col-sm-2">
+                        <a href="{{ url('/password-generator/index') }}">
+                            <button class="col-sm btn btn-secondary btn-info" id="btn-report">DASHBOARD</button>
+                        </a>
+                    </div>
+                    <div class="col-sm-8"></div>
                     <div class="col-sm-2">
                         <button class="col-sm btn btn-secondary btn-danger" id="btn-export">EXPORT</button>
                     </div>
@@ -75,7 +89,7 @@
         $('#btn-export').on('click',function() {
             tanggal = $('#tanggal').val().replace(/\//g, '-');
 
-            url = '{{ url('/password-generator/show-report?tanggal=') }}' + tanggal;
+            url = '{{ url('/password-generator/show-report?tanggal=') }}' + tanggal + '&order=' + $('#order').val();
 
             window.open(url);
         });

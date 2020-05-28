@@ -46,9 +46,24 @@ $datetime->setTimezone($timezone);
         </tr>
         </thead>
         <tbody>
-            @php $i = 0; @endphp
+            @php
+                $i = 0;
+                $cabang = '';
+            @endphp
             @foreach($record as $r)
-                @php $i++; @endphp
+                @if($order == 'cabang')
+                    @if($cabang != $r->otp_kodeigr)
+                        <tr>
+                            <td colspan="8" style="text-align: left">
+                                <strong>KODE CABANG : {{ $r->otp_kodeigr }}</strong>
+                            </td>
+                        </tr>
+                        @php $cabang = $r->otp_kodeigr; $i = 0;@endphp
+                    @endif
+                @endif
+                @php
+                    $i++;
+                @endphp
                 <tr>
                     <td>{{ $i }}</td>
                     <td>{{ $r->otp_kodeigr }}</td>

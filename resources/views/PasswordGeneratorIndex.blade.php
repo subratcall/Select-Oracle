@@ -17,6 +17,7 @@
                                         <select type="text" class="form-control" id="cabang">
                                             <option value="" selected disabled>- Pilih Cabang -</option>
                                             <option value="22">22 - SEMARANG</option>
+                                            <option value="99">99 - TES</option>
                                         </select>
                                     </div>
                                 </div>
@@ -61,7 +62,7 @@
                                 <div class="form-group row mb-0">
                                     <label for="user" class="col-sm-4 col-form-label">User</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="user" maxlength="3">
+                                        <input type="text" class="form-control" id="user" maxlength="10">
                                     </div>
                                 </div>
                                 <div class="form-group row mb-0">

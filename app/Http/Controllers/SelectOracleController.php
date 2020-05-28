@@ -139,23 +139,49 @@ class SelectOracleController extends Controller
         $ok = false;
         $tipe = $arr[0];
 
-        if(strtolower($arr[0]) != 'select'){
-            $status = 'error';
-            $message = 'Hanya query SELECT yang diperbolehkan!';
+        if($request->mode == 'manual'){
+            if(strtolower($arr[0]) != 'select') {
+                $status = 'error';
+                $message = 'Hanya query SELECT yang diperbolehkan!';
 
-            return compact(['status','message']);
+                return compact(['status', 'message']);
+            }
+            else{
+                for($i=0;$i<count($arr);$i++){
+                    if(strtolower($arr[$i]) == 'from'){
+                        $table = $arr[$i+1];
+                    }
+                }
+
+                if($_SESSION['database'] == 'postgre'){
+                    $queryGetColumn = "SELECT column_name
+                    FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$table."'";
+                }
+                else{
+                    $queryGetColumn = "SELECT column_name
+                        FROM USER_TAB_COLUMNS WHERE table_name = '".$table."'
+                        ORDER BY column_id";
+                }
+
+                $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($queryGetColumn));
+
+                $column = [];
+                foreach($columnlist as $c){
+                    array_push($column,$c->column_name);
+                }
+            }
         }
-
-
-        for($i=0;$i<count($arr);$i++){
-            if(strtolower($arr[$i]) == 'group' || strtolower($arr[$i]) == 'order'){
-                $ok = false;
-            }
-            if($ok){
-                $where .= $arr[$i].' ';
-            }
-            if(strtolower($arr[$i]) == 'where'){
-                $ok = true;
+        else{
+            for($i=0;$i<count($arr);$i++){
+                if(strtolower($arr[$i]) == 'group' || strtolower($arr[$i]) == 'order'){
+                    $ok = false;
+                }
+                if($ok){
+                    $where .= $arr[$i].' ';
+                }
+                if(strtolower($arr[$i]) == 'where'){
+                    $ok = true;
+                }
             }
         }
 
@@ -238,7 +264,12 @@ class SelectOracleController extends Controller
             }
 
 //            return compact(['status','message','result']);
-            return response()->json(['status' => $status, 'message' => $message, 'result' => $arrResult]);
+            if($request->mode == 'otomatis'){
+                return response()->json(['status' => $status, 'message' => $message, 'result' => $arrResult]);
+            }
+            else{
+                return response()->json(['status' => $status, 'message' => $message, 'result' => $arrResult, 'column' => $column]);
+            }
         }
     }
 }
