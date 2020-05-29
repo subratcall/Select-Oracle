@@ -159,7 +159,7 @@ class SelectOracleController extends Controller
                 }
                 else{
                     $queryGetColumn = "SELECT column_name
-                        FROM USER_TAB_COLUMNS WHERE table_name = '".$table."'
+                        FROM USER_TAB_COLUMNS WHERE table_name = '".strtoupper($table)."'
                         ORDER BY column_id";
                 }
 
