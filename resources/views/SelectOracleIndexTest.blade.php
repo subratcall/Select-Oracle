@@ -38,10 +38,10 @@
                                         </li>
                                     </ul>
                                     <div class="tab-content">
-                                        <div id="otomatis" class="container tab-pane pl-0 pr-0 fix-height active">
+                                        <div id="otomatis" class="tab-pane pl-0 pr-0 fix-height active">
                                             <div class="card-body ">
                                                 <div class="form-group row mb-0">
-                                                    <label for="tabel" class="col-sm-2 col-form-label">Tabel</label>
+                                                    <label for="tabel" class="col-sm-3 col-form-label">Tabel</label>
                                                     <div class="col-sm-4">
                                                         <select class="form-control selectized text-left" id="tabel">
                                                             <option value="" selected disabled>- PILIH TABEL -</option>
@@ -52,7 +52,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group row mb-0">
-                                                    <label for="tipe" class="col-sm-2 col-form-label">Tipe</label>
+                                                    <label for="tipe" class="col-sm-3 col-form-label">Tipe</label>
                                                     <div class="col-sm-4">
                                                         <select type="text" class="form-control selectized text-left" id="tipe">
                                                             <option value=""selected disabled>- PILIH TIPE QUERY -</option>
@@ -68,7 +68,7 @@
                                                 </div>
                                                 <div id="select" style="display:none">
                                                     <div class="form-group row mb-0 select-row">
-                                                        <label for="tabel" class="col-sm-2 col-form-label">Select</label>
+                                                        <label for="tabel" class="col-sm-3 col-form-label">Select</label>
                                                         <div class="col-sm-4">
                                                             <select type="text" class="form-control column select selectized text-left" onchange="column_onchange(event)">
                                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
@@ -81,7 +81,7 @@
                                                 </div>
                                                 <div id="update" style="display:none">
                                                     <div class="form-group row mb-0 update-row">
-                                                        <label for="tabel" class="col-sm-2 col-form-label">Set</label>
+                                                        <label for="tabel" class="col-sm-3 col-form-label">Set</label>
                                                         <div class="col-sm-4">
                                                             <select type="text" class="form-control column update selectized text-left" onchange="column_onchange(event)">
                                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
@@ -97,15 +97,14 @@
                                                 </div>
                                                 <div id="where" style="display:none">
                                                     <div class="form-group row mb-0 where-row">
-                                                        <label for="tabel" class="col-sm-2 col-form-label">Where</label>
+                                                        <label for="tabel" class="col-sm-3 col-form-label">Where</label>
                                                         <div class="col-sm-4">
                                                             <select type="text" class="form-control column where selectized text-left" onchange="column_onchange(event)">
                                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-1">
                                                             <select class="form form-control operator" type="text" disabled onchange="operatorChange(event)">
-                                                                <option value="" selected disabled>- Operator -</option>
                                                                 <option value="=">=</option>
                                                                 <option value="<"><</option>
                                                                 <option value="<="><=</option>
@@ -126,7 +125,7 @@
                                                 </div>
                                                 <div id="group" style="display:none">
                                                     <div class="form-group row mb-0 group-row">
-                                                        <label for="tabel" class="col-sm-2 col-form-label">Group By</label>
+                                                        <label for="tabel" class="col-sm-3 col-form-label">Group By</label>
                                                         <div class="col-sm-4">
                                                             <select type="text" class="form-control column group selectized text-left" onchange="column_onchange(event)">
                                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
@@ -139,7 +138,7 @@
                                                 </div>
                                                 <div id="order" style="display:none">
                                                     <div class="form-group row mb-0 order-row">
-                                                        <label for="tabel" class="col-sm-2 col-form-label">Order By</label>
+                                                        <label for="tabel" class="col-sm-3 col-form-label">Order By</label>
                                                         <div class="col-sm-4">
                                                             <select type="text" class="form-control column order selectized text-left">
                                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
@@ -158,7 +157,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="manual" class="container tab-pane pl-0 pr-0 fix-height">
+                                        <div id="manual" class="tab-pane pl-0 pr-0 fix-height">
                                             <div class="card-body ">
                                                 <div class="row text-right">
                                                     <div class="col-sm-12">
@@ -192,7 +191,7 @@
                     <div class="card-body shadow-lg cardForm">
                         <div class="row text-right">
                             <div class="col-sm-12 table-wrapper-scroll-y my-custom-scrollbar scroll-y">
-                                <table id="table-result" class="table table-sm table-bordered mb-3">
+                                <table id="table-result" class="w-100 table table-sm table-bordered mb-3">
                                     <thead id="result-header">
                                     </thead>
                                     <tbody id="result-body">
@@ -246,8 +245,9 @@
 
         .my-custom-scrollbar {
             position: relative;
-            height: 564px;
+            height: 650px;
             overflow-x: auto;
+            overflow-y: none;
         }
 
         .table-wrapper-scroll-y {
@@ -441,6 +441,11 @@
                             }
                         });
 
+                        if($('#table-result').find('tr').length != 0){
+                            $('#table-result').DataTable().destroy();
+                            $('#table-result').find('tr').remove();
+                        }
+
                         $('.column').each(function(){
                             $(this).selectize()[0].selectize.clear();
                             $(this).selectize()[0].selectize.clearOptions();
@@ -469,7 +474,7 @@
                             if(toLower(response[i].data_type) == 'timestamp without time zone' || toLower(response[i].data_type) =='date'){
                                 $('#insert').append(
                                     '<div class="form-group row mb-0 insert-row">' +
-                                    '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
+                                    '<label for="tabel" class="col-sm-3 col-form-label">'+ response[i].column_name +'</label>' +
                                     '<div class="col-sm-4">' +
                                     '<input class="form form-control insert-column tanggal" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
                                     '</div>' +
@@ -480,7 +485,7 @@
                             else if(toLower(response[i].data_type) == 'char'){
                                 $('#insert').append(
                                     '<div class="form-group row mb-0 insert-row">' +
-                                    '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
+                                    '<label for="tabel" class="col-sm-3 col-form-label">'+ response[i].column_name +'</label>' +
                                     '<div class="col-sm-4">' +
                                     '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
                                     '</div>' +
@@ -491,7 +496,7 @@
                             else{
                                 $('#insert').append(
                                     '<div class="form-group row mb-0 insert-row">' +
-                                    '<label for="tabel" class="col-sm-2 col-form-label">'+ response[i].column_name +'</label>' +
+                                    '<label for="tabel" class="col-sm-3 col-form-label">'+ response[i].column_name +'</label>' +
                                     '<div class="col-sm-4">' +
                                     '<input class="form form-control insert-column" type="text" id="'+ response[i].column_name +'" maxlength="' + nvl(response[i].data_length,999999) + '">' +
                                     '</div>' +
@@ -523,7 +528,7 @@
         function column_onchange(event){
             if($(event.target).val() != '' && $(event.target).val() != '*'){
                 $(event.target).parent().parent().find('.operator').prop('disabled',false);
-                $(event.target).parent().parent().find('.operator').val('');
+                $(event.target).parent().parent().find('.operator').val('=');
                 $(event.target).parent().parent().find('.operator').select();
                 $(event.target).parent().parent().find('.value').prop('disabled',false);
                 $('.value').each(function(){
@@ -560,8 +565,8 @@
         }
 
         function tambah_select(){
-            html = '<div class="form-group row mb-0 select-row">' +
-                '<div class="col-sm-2"></div>' +
+            html = '<div class="form-group row mb-0 select-row row-tambahan">' +
+                '<div class="col-sm-3"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column select text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
@@ -585,44 +590,43 @@
         }
 
         function tambah_where(){
-            html = '<div class="form-group row mb-0 where-row">' +
-                    '<div class="col-sm-2"></div>' +
-                    '<div class="col-sm-1 pt-0 pr-0 pb-0">' +
-                        '<select type="text" class="form-control text-left p-0 condition">' +
-                            '<option value="AND" selected>AND</option>' +
-                            '<option value="OR">OR</option>' +
-                        '</select>' +
-                    '</div>' +
-                    '<div class="col-sm-3">' +
-                        '<select type="text" class="form-control column where selectized text-left" onchange="column_onchange(event)">' +
-                            '<option value="" selected disabled>- Pilih kolom -</option>';
+            html = '<div class="form-group row mb-0 where-row row-tambahan">' +
+                '<div class="col-sm-3"></div>' +
+                '<div class="col-sm-1 pt-0 pr-0 pb-0">' +
+                '<select type="text" class="form-control text-left p-0 condition">' +
+                '<option value="AND" selected>AND</option>' +
+                '<option value="OR">OR</option>' +
+                '</select>' +
+                '</div>' +
+                '<div class="col-sm-3">' +
+                '<select type="text" class="form-control column where selectized text-left" onchange="column_onchange(event)">' +
+                '<option value="" selected disabled>- Pilih kolom -</option>';
 
             for(i=0;i<columnlist.length;i++){
                 html += "<option value='" + columnlist[i] + "'>" + columnlist[i] + "</option>";
             }
 
             html += '</select>' +
-                        '</div>' +
-                        '<div class="col-sm-2">' +
-                            '<select class="form form-control operator" type="text" disabled onchange="operatorChange(event)">' +
-                                '<option value="" selected disabled>- Operator -</option>' +
-                                '<option value="=">=</option>' +
-                                '<option value="<"><</option>' +
-                                '<option value="<="><=</option>' +
-                                '<option value=">=">>=</option>' +
-                                '<option value=">">></option>' +
-                                '<option value="<>"><></option>' +
-                                '<option value="LIKE">LIKE</option>' +
-                                '<option value="IN">IN</option>' +
-                            '</select>' +
-                        '</div>' +
-                        '<div class="col-sm-3">' +
-                            '<input class="form form-control value" type="text" disabled>' +
-                        '</div>' +
-                        '<div class="col-sm-1">' +
-                            '<button class="col-sm-10 btn btn-danger" onclick="delete_row(event)">X</button>' +
-                        '</div>' +
-                    '</div>';
+                '</div>' +
+                '<div class="col-sm-1">' +
+                '<select class="form form-control operator" type="text" disabled onchange="operatorChange(event)">' +
+                '<option value="=">=</option>' +
+                '<option value="<"><</option>' +
+                '<option value="<="><=</option>' +
+                '<option value=">=">>=</option>' +
+                '<option value=">">></option>' +
+                '<option value="<>"><></option>' +
+                '<option value="LIKE">LIKE</option>' +
+                '<option value="IN">IN</option>' +
+                '</select>' +
+                '</div>' +
+                '<div class="col-sm-3">' +
+                '<input class="form form-control value" type="text" disabled>' +
+                '</div>' +
+                '<div class="col-sm-1">' +
+                '<button class="col-sm-10 btn btn-danger" onclick="delete_row(event)">X</button>' +
+                '</div>' +
+                '</div>';
 
             $('#where').append(html);
 
@@ -630,8 +634,8 @@
         }
 
         function tambah_group(){
-            html = '<div class="form-group row mb-0 group-row">' +
-                '<div class="col-sm-2"></div>' +
+            html = '<div class="form-group row mb-0 group-row row-tambahan">' +
+                '<div class="col-sm-3"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column group selectized text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
@@ -653,8 +657,8 @@
         }
 
         function tambah_order(){
-            html = '<div class="form-group row mb-0 order-row">' +
-                '<div class="col-sm-2"></div>' +
+            html = '<div class="form-group row mb-0 order-row row-tambahan">' +
+                '<div class="col-sm-3"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column order selectized text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
@@ -664,17 +668,17 @@
             }
 
             html += '</select>' +
-                        '</div>' +
-                        '<div class="col-sm-2">\n' +
-                            '<select type="text" class="form-control direction">' +
-                                '<option value="ASC" selected>ASC</option>' +
-                                '<option value="DESC">DESC</option>' +
-                            '</select>' +
-                        '</div>' +
-                        '<div class="col-sm-1">' +
-                            '<button class="col-sm-10 btn btn-danger" onclick="delete_row(event)">X</button>' +
-                        '</div>' +
-                    '</div>';
+                '</div>' +
+                '<div class="col-sm-2">\n' +
+                '<select type="text" class="form-control direction">' +
+                '<option value="ASC" selected>ASC</option>' +
+                '<option value="DESC">DESC</option>' +
+                '</select>' +
+                '</div>' +
+                '<div class="col-sm-1">' +
+                '<button class="col-sm-10 btn btn-danger" onclick="delete_row(event)">X</button>' +
+                '</div>' +
+                '</div>';
 
             $('#order').append(html);
 
@@ -682,8 +686,8 @@
         }
 
         function tambah_update(){
-            html = '<div class="form-group row mb-0 update-row">' +
-                '<div class="col-sm-2"></div>' +
+            html = '<div class="form-group row mb-0 update-row row-tambahan">' +
+                '<div class="col-sm-3"></div>' +
                 '<div class="col-sm-4">' +
                 '<select type="text" class="form-control column update selectized text-left" onchange="column_onchange(event)">' +
                 '<option value="" selected disabled>- Pilih kolom -</option>';
@@ -743,12 +747,19 @@
             $('#group').hide();
             $('#order').hide();
 
+            $('.row-tambahan').remove();
+
             var $select = $('#tabel').selectize();
             var control = $select[0].selectize;
             control.clear();
 
             selectizing();
         }
+
+        $('#table-result').on('draw.dt',function(){
+            if($('#modal-loader').is(':visible'))
+                $('#modal-loader').modal('hide');
+        });
 
         $('#btn-execute').on('click',function(){
             swal({
@@ -910,109 +921,113 @@
 
                     console.log(query);
 
-                    $.ajax({
-                        url: '{{ url('select-oracle/execute') }}',
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data: {table: $('#tabel').val(), data: query, column: column, mode: mode},
-                        beforeSend: function () {
-                            $('#modal-loader').modal('show');
-                        },
-                        success: function (response) {
-                            if($('#modal-loader').is(':visible'))
-                                $('#modal-loader').modal('hide');
-                            console.log(response);
+                    if(tipe == 'select'){
+                        if($('#table-result').find('tr').length != 0){
+                            $('#table-result').DataTable().destroy();
+                            $('#table-result').find('tr').remove();
+                        }
 
-                            result = response.result;
+                        $.ajax({
+                            url: '{{ url('select-oracle/select') }}',
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {query: query},
+                            beforeSend: function () {
+                                $('#modal-loader').modal('show');
+                            },
+                            success: function (response) {
+                                header = '<tr class="text-center">';
 
-                            if(response.status == 'success'){
-                                if($('#table-result').find('tr').length != 0){
-                                    $('#table-result').DataTable().destroy();
-                                    $('#table-result').find('tr').remove();
+                                for(i=0;i<response.length;i++){
+                                    header += "<th>" + response[i].data.toUpperCase() + "</th>";
                                 }
+                                header += "</tr>";
 
-                                if(tipe == 'select'){
-                                    $('#field-result').show();
-                                    header = '<tr class="text-center">';
+                                $('#result-header').append(header);
 
-                                    if(mode == 'manual'){
-                                        column = response.column;
-                                    }
-
-                                    for(i=0;i<column.length;i++){
-                                        header += "<th>" + column[i].toUpperCase() + "</th>";
-                                    }
-                                    header += "</tr>";
-
-                                    $('#result-header').append(header);
-                                    for(i=0;i<result.length;i++){
-                                        html = '<tr class="text-left">';
-                                        for(j=0;j<column.length;j++){
-                                            html += '<td class="nowrap">' + nvl(result[i][column[j].toLowerCase()], '') + '</td>';
+                                $('#table-result').DataTable({
+                                    processing: true,
+                                    serverSide: true,
+                                    pageLength: 10,
+                                    ajax: {
+                                        url: '{{ url('select-oracle/getData') }}',
+                                        type: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                         }
-                                        html += '</tr>';
+                                    },
+                                    columns: response,
+                                    order: false
+                                });
 
-                                        $('#result-body').append(html);
-                                    }
+                                $('#update').hide();
+                                $('#insert').hide();
+                                $('#field-result').show();
+                            }
+                        });
+                    }
+                    else{
+                        if($('#table-result').find('tr').length != 0){
+                            $('#table-result').DataTable().destroy();
+                            $('#table-result').find('tr').remove();
+                        }
+                        $('#field-result').hide();
 
-                                    $('#table-result').DataTable();
+                        $.ajax({
+                            url: '{{ url('select-oracle/execute') }}',
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {table: $('#tabel').val(), data: query, column: column, mode: mode},
+                            beforeSend: function () {
+                                $('#modal-loader').modal('show');
+                            },
+                            success: function (response) {
+                                if($('#modal-loader').is(':visible'))
+                                    $('#modal-loader').modal('hide');
+                                console.log(response);
 
-                                    $('input').val('');
-                                    $('select').val('');
-                                    $('.direction').val('ASC');
-                                    $('#where').hide();
-                                    $('#update').hide();
-                                    $('#insert').hide();
-                                    $('#select').hide();
-                                    $('#group').hide();
-                                    $('#order').hide();
+                                result = response.result;
+
+                                if(response.status == 'success'){
+                                    $('select').each(function(){
+                                        $(this).selectize()[0].selectize.destroy();
+                                    });
+
+                                    swal({
+                                        title: 'Query berhasil dijalankan!',
+                                        text: response.message,
+                                        icon: response.status
+                                    }).then(function(ok){
+                                        if(ok){
+                                            initial();
+                                            if(tipe != 'select')
+                                                $('#field-result').hide();
+                                        }
+                                        if($('#modal-loader').is(':visible'))
+                                            $('#modal-loader').modal('hide');
+                                    });
                                 }
                                 else{
-                                    $('#field-result').hide();
+                                    swal({
+                                        title: 'Query gagal dijalankan!',
+                                        text: response.message,
+                                        icon: response.status
+                                    }).then(function(ok){
+                                        if(ok){
+                                            if(tipe != 'select')
+                                                $('#field-result').hide();
+                                        }
+                                        if($('#modal-loader').is(':visible'))
+                                            $('#modal-loader').modal('hide');
+                                    });
                                 }
-
-                                // if(tipe == 'insert' || tipe == 'update'){
-                                //     $('#insert').find('input').selectize()[0].selectize.destroy();
-                                //     $('#update').find('input').selectize()[0].selectize.destroy();
-                                //     $('#where').find('input').selectize()[0].selectize.destroy();
-                                // }
-
-                                $('select').each(function(){
-                                    $(this).selectize()[0].selectize.destroy();
-                                });
-
-                                swal({
-                                    title: 'Query berhasil dijalankan!',
-                                    text: response.message,
-                                    icon: response.status
-                                }).then(function(ok){
-                                    if(ok){
-                                        initial();
-                                        if(tipe != 'select')
-                                            $('#field-result').hide();
-                                    }
-                                    if($('#modal-loader').is(':visible'))
-                                        $('#modal-loader').modal('hide');
-                                });
                             }
-                            else{
-                                swal({
-                                    title: 'Query gagal dijalankan!',
-                                    text: response.message,
-                                    icon: response.status
-                                }).then(function(ok){
-                                    if(ok){
-                                        if(tipe != 'select')
-                                            $('#field-result').hide();
-                                    }
-                                    if($('#modal-loader').is(':visible'))
-                                        $('#modal-loader').modal('hide');
-                                });
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
             })
         });

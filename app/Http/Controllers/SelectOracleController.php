@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use DataTables;
 
 class SelectOracleController extends Controller
 {
@@ -96,7 +98,7 @@ class SelectOracleController extends Controller
 
         $connection = $_SESSION['connection'];
 
-        return view('SelectOracleIndex')->with(compact(['tablelist','connection','now']));
+        return view('SelectOracleIndexTest')->with(compact(['tablelist','connection','now']));
     }
 
     public function getColumnList(Request $request){
@@ -189,16 +191,11 @@ class SelectOracleController extends Controller
 
         $status = '';
         $message = '';
-        $arrResult = '';
 
         try{
             DB::CONNECTION($_SESSION['connection'])->beginTransaction();
 
-            if(strtolower($tipe) == 'select'){
-                $result = DB::CONNECTION($_SESSION['connection'])->SELECT(DB::RAW($query));
-                $arrResult = (Array) $result;
-            }
-            else if(strtolower($tipe) == 'insert'){
+            if(strtolower($tipe) == 'insert'){
                 $result = DB::CONNECTION($_SESSION['connection'])->INSERT($query);
             }
             else if(strtolower($tipe) == 'update'){
@@ -208,31 +205,29 @@ class SelectOracleController extends Controller
                 $result = DB::CONNECTION($_SESSION['connection'])->DELETE($query);
             }
 
-            if(strtolower($tipe) != 'select'){
-                if($_SESSION['database'] == 'postgre'){
-                    DB::CONNECTION($_SESSION['connection'])
-                        ->table('log')
-                        ->insert([
-                            'log_table' => strtoupper($table),
-                            'log_query' => $query,
-                            'log_where' => $where,
-                            'log_date' => DB::RAW("NOW()"),
-                            'log_user' => $user,
-                            'log_kodeigr' => $_SESSION['kodeigr']
-                        ]);
-                }
-                else{
-                    DB::CONNECTION($_SESSION['connection'])
-                        ->table('TBHISTORY_LOGDATA')
-                        ->insert([
-                            'log_table' => strtoupper($table),
-                            'log_query' => $query,
-                            'log_where' => $where,
-                            'log_date' => DB::RAW("SYSDATE"),
-                            'log_user' => $user,
-                            'log_kodeigr' => $_SESSION['kodeigr']
-                        ]);
-                }
+            if($_SESSION['database'] == 'postgre'){
+                DB::CONNECTION($_SESSION['connection'])
+                    ->table('log')
+                    ->insert([
+                        'log_table' => strtoupper($table),
+                        'log_query' => $query,
+                        'log_where' => $where,
+                        'log_date' => DB::RAW("NOW()"),
+                        'log_user' => $user,
+                        'log_kodeigr' => $_SESSION['kodeigr']
+                    ]);
+            }
+            else{
+                DB::CONNECTION($_SESSION['connection'])
+                    ->table('TBHISTORY_LOGDATA')
+                    ->insert([
+                        'log_table' => strtoupper($table),
+                        'log_query' => $query,
+                        'log_where' => $where,
+                        'log_date' => DB::RAW("SYSDATE"),
+                        'log_user' => $user,
+                        'log_kodeigr' => $_SESSION['kodeigr']
+                    ]);
             }
         }
         catch(QueryException $e){
@@ -241,8 +236,6 @@ class SelectOracleController extends Controller
             $status = 'error';
             $message = $e->getMessage();
 
-//            dd($message);
-//            return $e->getMessage();
             return compact(['status','message']);
         }
         finally {
@@ -253,23 +246,69 @@ class SelectOracleController extends Controller
             }
 
             $status = 'success';
-            if(strtolower($tipe) != 'select'){
-                if($result > 0){
-                    $message = 'Ada data yang terupdate!';
-                }
-                else $message = 'Tidak ada data yang terupdate!';
-            }
-            else{
-                $message = 'Ditemukan '.count($result).' data!';
-            }
 
-//            return compact(['status','message','result']);
-            if($request->mode == 'otomatis'){
-                return response()->json(['status' => $status, 'message' => $message, 'result' => $arrResult]);
+            if($result > 0){
+                $message = 'Ada data yang terupdate!';
             }
-            else{
-                return response()->json(['status' => $status, 'message' => $message, 'result' => $arrResult, 'column' => $column]);
+            else $message = 'Tidak ada data yang terupdate!';
+
+            return response()->json(['status' => $status, 'message' => $message]);
+        }
+    }
+
+    public function getData(Request $request){
+        session_start();
+        $query = $_SESSION['query'];
+        $result = DB::select($query);
+
+        return DataTables::of($result)->make(true);
+    }
+
+    public function select(Request $request){
+        session_start();
+
+        $_SESSION['query'] = $request['query'];
+
+        $array = str_replace(',', '',explode(' ',$_SESSION['query']));
+
+        $table = '';
+        $column = [];
+
+        for($i=0;$i<count($array);$i++){
+            if(strtolower($array[$i]) == 'from'){
+                $table = $array[$i+1];
+                break;
+            }
+            if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
+                $c['data'] = $array[$i];
+                $c['class'] = 'nowrap';
+                array_push($column,$c);
             }
         }
+
+        if($column[0]['data'] == '*'){
+            if($_SESSION['database'] == 'postgre'){
+                $query = "SELECT column_name as data
+                    FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$table."'";
+            }
+            else{
+                $query = "SELECT column_name as data
+                        FROM USER_TAB_COLUMNS WHERE table_name = '".$table."'
+                        ORDER BY column_id";
+            }
+
+            $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
+
+            $column = [];
+
+            foreach($columnlist as $c){
+                $x['class'] = 'nowrap';
+                $x['data'] = $c->data;
+                array_push($column,$x);
+            }
+
+            return $column;
+        }
+        else return $column;
     }
 }

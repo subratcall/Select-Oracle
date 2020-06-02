@@ -37,3 +37,7 @@ Route::get('/password-generator/report',function(){
     return view('PasswordGeneratorReport');
 });
 Route::get('/password-generator/show-report','PasswordGeneratorController@report');
+
+
+Route::post('/select-oracle/getData','SelectOracleController@getData');
+Route::post('/select-oracle/select','SelectOracleController@select');
