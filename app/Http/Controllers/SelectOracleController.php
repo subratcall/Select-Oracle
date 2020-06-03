@@ -259,7 +259,7 @@ class SelectOracleController extends Controller
     public function getData(Request $request){
         session_start();
         $query = $_SESSION['query'];
-        $result = DB::select($query);
+        $result = DB::connection($_SESSION['connection'])->select($query);
 
         return DataTables::of($result)->make(true);
     }
@@ -293,7 +293,7 @@ class SelectOracleController extends Controller
             }
             else{
                 $query = "SELECT column_name as data
-                        FROM USER_TAB_COLUMNS WHERE table_name = '".$table."'
+                        FROM USER_TAB_COLUMNS WHERE table_name = '".strtoupper($table)."'
                         ORDER BY column_id";
             }
 
