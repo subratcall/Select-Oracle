@@ -280,7 +280,7 @@ class SelectOracleController extends Controller
                 break;
             }
             if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
-                $c['data'] = $array[$i];
+                $c['data'] = strtolower($array[$i]);
                 $c['class'] = 'nowrap';
                 array_push($column,$c);
             }
@@ -303,7 +303,7 @@ class SelectOracleController extends Controller
 
             foreach($columnlist as $c){
                 $x['class'] = 'nowrap';
-                $x['data'] = $c->data;
+                $x['data'] = strtolower($c->data);
                 array_push($column,$x);
             }
 
