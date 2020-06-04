@@ -277,6 +277,10 @@
 
             checkLoginStatus(hour);
             // $('#where').show();
+
+            // $('#query-manual').val('select * from table_big_data');
+            // $('#btn-select-manual').click();
+            // $('#btn-execute').click();
         });
 
         function checkLoginStatus(hour) {
@@ -922,6 +926,8 @@
                     console.log(query);
 
                     if(tipe == 'select'){
+                        // query += ' limit 100000';
+
                         if($('#table-result').find('tr').length != 0){
                             $('#table-result').DataTable().destroy();
                             $('#table-result').find('tr').remove();
@@ -938,33 +944,45 @@
                                 $('#modal-loader').modal('show');
                             },
                             success: function (response) {
-                                header = '<tr class="text-center">';
-
-                                for(i=0;i<response.length;i++){
-                                    header += "<th>" + response[i].data.toUpperCase() + "</th>";
+                                if(response.status == 'error'){
+                                    swal({
+                                        title: 'Query yang diperbolehkan hanya SELECT!',
+                                        icon: response.status
+                                    }).then(function(ok){
+                                        if($('#modal-loader').is(':visible'))
+                                            $('#modal-loader').modal('hide');
+                                    });
                                 }
-                                header += "</tr>";
+                                else{
+                                    header = '<tr class="text-center">';
 
-                                $('#result-header').append(header);
+                                    for(i=0;i<response.length;i++){
+                                        header += "<th>" + response[i].data.toUpperCase() + "</th>";
+                                    }
+                                    header += "</tr>";
 
-                                $('#table-result').DataTable({
-                                    processing: true,
-                                    serverSide: true,
-                                    pageLength: 10,
-                                    ajax: {
-                                        url: '{{ url('select-oracle/getData') }}',
-                                        type: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                        }
-                                    },
-                                    columns: response,
-                                    order: false
-                                });
+                                    $('#result-header').append(header);
 
-                                $('#update').hide();
-                                $('#insert').hide();
-                                $('#field-result').show();
+                                    $('#table-result').DataTable({
+                                        processing: true,
+                                        serverSide: true,
+                                        pageLength: 10,
+                                        ajax: {
+                                            url: '{{ url('select-oracle/getData') }}',
+                                            type: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                            }
+                                        },
+                                        columns: response,
+                                        ordering: false,
+                                        searching: false,
+                                    });
+
+                                    $('#update').hide();
+                                    $('#insert').hide();
+                                    $('#field-result').show();
+                                }
                             }
                         });
                     }

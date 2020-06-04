@@ -22,6 +22,7 @@ class ComposerStaticInitf969e20aeee47c0abce98c1b4e8e9009
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '0d8253363903f0ac7b0978dcde4e28a0' => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/helpers.php',
+        'f6b8c169f63ac09147f3e68e21673356' => __DIR__ . '/..' . '/syamsoul/laravel-datatable-ssp/src/helpers.php',
         '0b47d6d4a00ca9112ba3953b49e7c9a4' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/helper.php',
         '8d3b2199cd129cab173c6d6470bfbcb5' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/helper.php',
     );
@@ -75,6 +76,7 @@ class ComposerStaticInitf969e20aeee47c0abce98c1b4e8e9009
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Svg\\' => 4,
+            'SoulDoit\\DataTable\\' => 19,
         ),
         'R' => 
         array (
@@ -278,6 +280,10 @@ class ComposerStaticInitf969e20aeee47c0abce98c1b4e8e9009
         'Svg\\' => 
         array (
             0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
+        ),
+        'SoulDoit\\DataTable\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/syamsoul/laravel-datatable-ssp/src',
         ),
         'Ramsey\\Uuid\\' => 
         array (
@@ -3456,6 +3462,8 @@ class ComposerStaticInitf969e20aeee47c0abce98c1b4e8e9009
         'SebastianBergmann\\Timer\\RuntimeException' => __DIR__ . '/..' . '/phpunit/php-timer/src/RuntimeException.php',
         'SebastianBergmann\\Timer\\Timer' => __DIR__ . '/..' . '/phpunit/php-timer/src/Timer.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'SoulDoit\\DataTable\\DataTableServiceProvider' => __DIR__ . '/..' . '/syamsoul/laravel-datatable-ssp/src/DataTableServiceProvider.php',
+        'SoulDoit\\DataTable\\SSP' => __DIR__ . '/..' . '/syamsoul/laravel-datatable-ssp/src/SSP.php',
         'Svg\\DefaultStyle' => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg/DefaultStyle.php',
         'Svg\\Document' => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg/Document.php',
         'Svg\\Gradient\\Stop' => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg/Gradient/Stop.php',

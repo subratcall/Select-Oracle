@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use DataTables;
 
+use SoulDoit\DataTable\SSP;
+use App\TableBigData;
+
 class SelectOracleController extends Controller
 {
     public function login(Request $request){
@@ -261,7 +264,49 @@ class SelectOracleController extends Controller
         $query = $_SESSION['query'];
         $result = DB::connection($_SESSION['connection'])->select($query);
 
-        return DataTables::of($result)->make(true);
+        return DataTables::of(DB::connection($_SESSION['connection'])->select($query.' limit 100000'))->make(true);
+
+
+//        $array = str_replace(',', '',explode(' ',$_SESSION['query']));
+//
+//        $table = '';
+//        $column = [];
+//
+//        for($i=0;$i<count($array);$i++){
+//            if(strtolower($array[$i]) == 'from'){
+//                $table = $array[$i+1];
+//                break;
+//            }
+//            if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
+//                $c['db'] = strtolower($array[$i]);
+//                array_push($column,$c);
+//            }
+//        }
+//
+//        if($column[0]['db'] == '*'){
+//            if($_SESSION['database'] == 'postgre'){
+//                $query = "SELECT column_name as data
+//                    FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$table."'";
+//            }
+//            else{
+//                $query = "SELECT column_name as data
+//                        FROM USER_TAB_COLUMNS WHERE table_name = '".strtoupper($table)."'
+//                        ORDER BY column_id";
+//            }
+//
+//            $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
+//
+//            $column = [];
+//
+//            foreach($columnlist as $c){
+//                $x['db'] = strtolower($c->data);
+//                array_push($column,$x);
+//            }
+//        }
+//
+//        $my_ssp = new SSP('semarang.table_big_data',$column);
+//
+//        return $my_ssp->getDtArr();
     }
 
     public function select(Request $request){
@@ -273,6 +318,11 @@ class SelectOracleController extends Controller
 
         $table = '';
         $column = [];
+
+        if(strtolower($array[0]) != 'select'){
+            $status = 'error';
+            return compact(['status']);
+        }
 
         for($i=0;$i<count($array);$i++){
             if(strtolower($array[$i]) == 'from'){
@@ -310,5 +360,104 @@ class SelectOracleController extends Controller
             return $column;
         }
         else return $column;
+    }
+
+    public function insertBigData(){
+        session_start();
+
+//        $result = DB::connection($_SESSION['connection'])->select('select * from table_big_data limit 1100000');
+//
+//        dd(count($result));
+
+
+//        dd(TableBigData::all());
+
+        $insert = [];
+
+        for($i=0;$i<1000;$i++){
+            $in['column_a'] = $i.'AAAAAAA';
+            $in['column_b'] = $i.'BBBBBBB';
+            $in['column_c'] = $i.'CCCCCCC';
+            $in['column_d'] = $i.'DDDDDDD';
+            $in['column_e'] = $i.'EEEEEEE';
+            $in['column_f'] = $i.'FFFFFFF';
+            $in['column_g'] = $i.'GGGGGGG';
+
+            array_push($insert,$in);
+        }
+
+        for($i=0;$i<100;$i++){
+            DB::connection($_SESSION['connection'])
+                ->table('table_big_data')
+                ->insert($insert);
+        }
+    }
+
+    public function test(){
+//        $a = DB::table('log_otp')->select('*')->get();
+//
+//        dd($a);
+
+        session_start();
+        $query = 'select * from table_big_data';
+//        $result = DB::connection($_SESSION['connection'])->select($query);
+
+//        return DataTables::of(DB::connection($_SESSION['connection'])->select($query))->make(true);
+
+
+        $array = str_replace(',', '',explode(' ',$_SESSION['query']));
+
+        $table = '';
+        $column = [];
+
+        for($i=0;$i<count($array);$i++){
+            if(strtolower($array[$i]) == 'from'){
+                $table = $array[$i+1];
+                break;
+            }
+            if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
+                $c['db'] = strtolower($array[$i]);
+                array_push($column,$c);
+            }
+        }
+
+        if($column[0]['db'] == '*'){
+            if($_SESSION['database'] == 'postgre'){
+                $query = "SELECT column_name as data
+                    FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$table."'";
+            }
+            else{
+                $query = "SELECT column_name as data
+                        FROM USER_TAB_COLUMNS WHERE table_name = '".strtoupper($table)."'
+                        ORDER BY column_id";
+            }
+
+            $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
+
+            $column = [];
+
+            foreach($columnlist as $c){
+                $x['db'] = strtolower($c->data);
+                array_push($column,$x);
+            }
+        }
+
+//        dd($column);
+        $dt = [
+            ['db'=>'column_a','dt'=>0],
+            ['db'=>'column_b','dt'=>1],
+            ['db'=>'column_c','dt'=>2],
+            ['db'=>'column_d','dt'=>3],
+            ['db'=>'column_e','dt'=>4],
+            ['db'=>'column_f','dt'=>5],
+            ['db'=>'column_g','dt'=>6],
+        ];
+        $my_ssp = (new SSP('table_big_data',$dt));
+        dd($my_ssp->getNormalData());
+
+        $my_ssp = ('\App\TableBigData')::select(['table_big_data.column_a']);
+        $my_ssp = $my_ssp->get();
+
+        dd($my_ssp);
     }
 }

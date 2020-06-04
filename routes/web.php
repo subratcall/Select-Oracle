@@ -41,3 +41,6 @@ Route::get('/password-generator/show-report','PasswordGeneratorController@report
 
 Route::post('/select-oracle/getData','SelectOracleController@getData');
 Route::post('/select-oracle/select','SelectOracleController@select');
+
+Route::get('/select-oracle/insertBigData','SelectOracleController@insertBigData');
+Route::get('/select-oracle/test','SelectOracleController@test');

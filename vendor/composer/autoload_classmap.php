@@ -3032,6 +3032,8 @@ return array(
     'SebastianBergmann\\Timer\\RuntimeException' => $vendorDir . '/phpunit/php-timer/src/RuntimeException.php',
     'SebastianBergmann\\Timer\\Timer' => $vendorDir . '/phpunit/php-timer/src/Timer.php',
     'SebastianBergmann\\Version' => $vendorDir . '/sebastian/version/src/Version.php',
+    'SoulDoit\\DataTable\\DataTableServiceProvider' => $vendorDir . '/syamsoul/laravel-datatable-ssp/src/DataTableServiceProvider.php',
+    'SoulDoit\\DataTable\\SSP' => $vendorDir . '/syamsoul/laravel-datatable-ssp/src/SSP.php',
     'Svg\\DefaultStyle' => $vendorDir . '/phenx/php-svg-lib/src/Svg/DefaultStyle.php',
     'Svg\\Document' => $vendorDir . '/phenx/php-svg-lib/src/Svg/Document.php',
     'Svg\\Gradient\\Stop' => $vendorDir . '/phenx/php-svg-lib/src/Svg/Gradient/Stop.php',
