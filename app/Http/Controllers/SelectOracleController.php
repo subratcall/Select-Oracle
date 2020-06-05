@@ -262,7 +262,7 @@ class SelectOracleController extends Controller
     public function getData(Request $request){
         session_start();
         $query = $_SESSION['query'];
-        $result = DB::connection($_SESSION['connection'])->select($query);
+//        $result = DB::connection($_SESSION['connection'])->select($query);
 
         return DataTables::of(DB::connection($_SESSION['connection'])->select($query))->make(true);
 

@@ -823,9 +823,16 @@
                             $('.where-row').each(function(){
                                 if($(this).find('.where').val() != null && $(this).find('.where').val() != '*'){
                                     if(where == ''){
-                                        if($(this).find('.operator').val() != 'IN')
-                                            where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
-                                        else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        if('{{ $_SESSION['database'] }}' == 'oracle') {
+                                            if ($(this).find('.operator').val() != 'IN')
+                                                where = ' WHERE ROWNUM <= 100 AND ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                            else where = ' WHERE ROWNUM <= 100 AND ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        }
+                                        else{
+                                            if ($(this).find('.operator').val() != 'IN')
+                                                where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                            else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        }
                                     }
                                     else{
                                         if($(this).find('.operator').val() != 'IN')
@@ -835,7 +842,11 @@
                                 }
                             });
 
-                            query += where;
+                            if('{{ $_SESSION['database'] }}' == 'oracle')
+                                if(where != '')
+                                    query += where;
+                                else query += ' WHERE ROWNUM <= 100';
+                            else query += ' LIMIT 100';
 
                             $('.group-row').each(function(){
                                 if($(this).find('.group').val() != null) {
@@ -895,7 +906,7 @@
                                     if(where == '')
                                         where = ' WHERE ';
                                     if(where != ' WHERE '){
-                                        where += ' AND ';
+                                        where += " " + $(this).find('.condition').val() + " ";
                                     }
                                     where += $(this).find('.where').val() + ' ' + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
                                 }
@@ -910,7 +921,7 @@
                             $('.where-row').each(function(){
                                 if($(this).find('.operator').val() != '' && $(this).find('.value').val() != ''){
                                     if(where != ''){
-                                        where += ' AND ';
+                                        where += " " + $(this).find('.condition').val() + " ";
                                     }
                                     if(where == ''){
                                         where = ' WHERE ';
@@ -926,7 +937,7 @@
                     console.log(query);
 
                     if(tipe == 'select'){
-                        query += ' limit 100';
+                        // query += ' limit 100';
 
                         if($('#table-result').find('tr').length != 0){
                             $('#table-result').DataTable().destroy();
