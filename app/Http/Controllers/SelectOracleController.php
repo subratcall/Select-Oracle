@@ -264,7 +264,7 @@ class SelectOracleController extends Controller
         $query = $_SESSION['query'];
         $result = DB::connection($_SESSION['connection'])->select($query);
 
-        return DataTables::of(DB::connection($_SESSION['connection'])->select($query.' limit 100000'))->make(true);
+        return DataTables::of(DB::connection($_SESSION['connection'])->select($query))->make(true);
 
 
 //        $array = str_replace(',', '',explode(' ',$_SESSION['query']));

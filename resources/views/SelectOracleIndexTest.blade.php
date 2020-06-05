@@ -926,7 +926,7 @@
                     console.log(query);
 
                     if(tipe == 'select'){
-                        // query += ' limit 100000';
+                        query += ' limit 100';
 
                         if($('#table-result').find('tr').length != 0){
                             $('#table-result').DataTable().destroy();
