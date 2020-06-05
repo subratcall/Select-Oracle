@@ -951,7 +951,7 @@
                             success: function (response) {
                                 if(response.status == 'error'){
                                     swal({
-                                        title: 'Query yang diperbolehkan hanya SELECT!',
+                                        title: response.message,
                                         icon: response.status
                                     }).then(function(ok){
                                         if($('#modal-loader').is(':visible'))

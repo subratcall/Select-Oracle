@@ -314,7 +314,7 @@ class SelectOracleController extends Controller
 
         $querySelect = $request['query'];
 
-        $array = str_replace(',', '',explode(' ',$querySelect));
+        $array = str_replace(',', '',explode(' ',$string = trim(preg_replace('/\s+/', ' ', $querySelect))));
 
         $table = '';
         $column = [];
@@ -323,7 +323,8 @@ class SelectOracleController extends Controller
 
         if(strtolower($array[0]) != 'select'){
             $status = 'error';
-            return compact(['status']);
+            $message = 'Hanya query SELECT yang diperbolehkan!';
+            return compact(['status','message']);
         }
 
         for($i=0;$i<count($array);$i++){
@@ -332,7 +333,7 @@ class SelectOracleController extends Controller
             }
             if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
                 $c['data'] = strtolower($array[$i]);
-                $c['class'] = 'nowrap';
+                $c['class'] = 'nowrap text-left';
                 array_push($column,$c);
             }
             if(strtolower($array[$i]) == 'where')
@@ -341,6 +342,7 @@ class SelectOracleController extends Controller
                 $limit = true;
         }
 
+//        $_SESSION['database'] = 'oracle';
         if($where){
             if(!$limit){
                 if($_SESSION['database'] == 'oracle')
@@ -362,6 +364,9 @@ class SelectOracleController extends Controller
 
         $_SESSION['query'] = $querySelect;
 
+//        $_SESSION['database'] = 'postgre';
+//        dd($querySelect);
+
         if($column[0]['data'] == '*'){
             if($_SESSION['database'] == 'postgre'){
                 $query = "SELECT column_name as data
@@ -381,6 +386,12 @@ class SelectOracleController extends Controller
                 $x['class'] = 'nowrap';
                 $x['data'] = strtolower($c->data);
                 array_push($column,$x);
+            }
+
+            if(count($column) == 0){
+                $status = 'error';
+                $message = 'Tabel tidak ditemukan!';
+                return compact(['status','message']);
             }
 
             return $column;
