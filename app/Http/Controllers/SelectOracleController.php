@@ -312,12 +312,14 @@ class SelectOracleController extends Controller
     public function select(Request $request){
         session_start();
 
-        $_SESSION['query'] = $request['query'];
+        $querySelect = $request['query'];
 
-        $array = str_replace(',', '',explode(' ',$_SESSION['query']));
+        $array = str_replace(',', '',explode(' ',$querySelect));
 
         $table = '';
         $column = [];
+        $where = false;
+        $limit = false;
 
         if(strtolower($array[0]) != 'select'){
             $status = 'error';
@@ -327,14 +329,40 @@ class SelectOracleController extends Controller
         for($i=0;$i<count($array);$i++){
             if(strtolower($array[$i]) == 'from'){
                 $table = $array[$i+1];
-                break;
             }
             if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
                 $c['data'] = strtolower($array[$i]);
                 $c['class'] = 'nowrap';
                 array_push($column,$c);
             }
+            if(strtolower($array[$i]) == 'where')
+                $where = true;
+            if(strtolower($array[$i]) == 'limit' || strtolower($array[$i]) == 'rownum')
+                $limit = true;
         }
+
+        if($where){
+            if(!$limit){
+                if($_SESSION['database'] == 'oracle')
+                    $querySelect .= ' AND ROWNUM <= 100';
+                else{
+                    $querySelect .= ' LIMIT 100';
+                }
+            }
+        }
+        else{
+            if(!$limit){
+                if($_SESSION['database'] == 'oracle')
+                    $querySelect .= ' WHERE ROWNUM <= 100';
+                else{
+                    $querySelect .= ' LIMIT 100';
+                }
+            }
+        }
+
+        $_SESSION['query'] = $querySelect;
+
+        dd($querySelect);
 
         if($column[0]['data'] == '*'){
             if($_SESSION['database'] == 'postgre'){

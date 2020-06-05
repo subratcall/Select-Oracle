@@ -825,8 +825,8 @@
                                     if(where == ''){
                                         if('{{ $_SESSION['database'] }}' == 'oracle') {
                                             if ($(this).find('.operator').val() != 'IN')
-                                                where = ' WHERE ROWNUM <= 100 AND ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
-                                            else where = ' WHERE ROWNUM <= 100 AND ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                                where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                            else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
                                         }
                                         else{
                                             if ($(this).find('.operator').val() != 'IN')
@@ -841,12 +841,6 @@
                                     }
                                 }
                             });
-
-                            if('{{ $_SESSION['database'] }}' == 'oracle')
-                                if(where != '')
-                                    query += where;
-                                else query += ' WHERE ROWNUM <= 100';
-                            else query += ' LIMIT 100';
 
                             $('.group-row').each(function(){
                                 if($(this).find('.group').val() != null) {
