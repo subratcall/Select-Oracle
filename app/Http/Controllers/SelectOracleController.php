@@ -362,8 +362,6 @@ class SelectOracleController extends Controller
 
         $_SESSION['query'] = $querySelect;
 
-        dd($querySelect);
-
         if($column[0]['data'] == '*'){
             if($_SESSION['database'] == 'postgre'){
                 $query = "SELECT column_name as data
