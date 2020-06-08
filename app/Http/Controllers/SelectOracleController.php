@@ -358,7 +358,7 @@ class SelectOracleController extends Controller
             $column = [];
 
             foreach($columnlist as $c){
-                $x['class'] = 'nowrap';
+                $x['class'] = 'nowrap text-left';
                 $x['data'] = strtolower($c->data);
                 array_push($column,$x);
             }
