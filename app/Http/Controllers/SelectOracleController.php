@@ -261,52 +261,10 @@ class SelectOracleController extends Controller
 
     public function getData(Request $request){
         session_start();
+
         $query = $_SESSION['query'];
-//        $result = DB::connection($_SESSION['connection'])->select($query);
 
         return DataTables::of(DB::connection($_SESSION['connection'])->select($query))->make(true);
-
-
-//        $array = str_replace(',', '',explode(' ',$_SESSION['query']));
-//
-//        $table = '';
-//        $column = [];
-//
-//        for($i=0;$i<count($array);$i++){
-//            if(strtolower($array[$i]) == 'from'){
-//                $table = $array[$i+1];
-//                break;
-//            }
-//            if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
-//                $c['db'] = strtolower($array[$i]);
-//                array_push($column,$c);
-//            }
-//        }
-//
-//        if($column[0]['db'] == '*'){
-//            if($_SESSION['database'] == 'postgre'){
-//                $query = "SELECT column_name as data
-//                    FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema ='".$_SESSION['connection']."' AND table_name ='".$table."'";
-//            }
-//            else{
-//                $query = "SELECT column_name as data
-//                        FROM USER_TAB_COLUMNS WHERE table_name = '".strtoupper($table)."'
-//                        ORDER BY column_id";
-//            }
-//
-//            $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
-//
-//            $column = [];
-//
-//            foreach($columnlist as $c){
-//                $x['db'] = strtolower($c->data);
-//                array_push($column,$x);
-//            }
-//        }
-//
-//        $my_ssp = new SSP('semarang.table_big_data',$column);
-//
-//        return $my_ssp->getDtArr();
     }
 
     public function select(Request $request){
@@ -320,6 +278,7 @@ class SelectOracleController extends Controller
         $column = [];
         $where = false;
         $limit = false;
+        $from = false;
 
         if(strtolower($array[0]) != 'select'){
             $status = 'error';
@@ -330,8 +289,9 @@ class SelectOracleController extends Controller
         for($i=0;$i<count($array);$i++){
             if(strtolower($array[$i]) == 'from'){
                 $table = $array[$i+1];
+                $from = true;
             }
-            if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != ''){
+            if(strtolower($array[$i]) != 'select' && strtolower($array[$i]) != 'from' && $array[$i] != '' && !$from){
                 $c['data'] = strtolower($array[$i]);
                 $c['class'] = 'nowrap text-left';
                 array_push($column,$c);
@@ -342,7 +302,6 @@ class SelectOracleController extends Controller
                 $limit = true;
         }
 
-//        $_SESSION['database'] = 'oracle';
         if($where){
             if(!$limit){
                 if($_SESSION['database'] == 'oracle')
@@ -364,8 +323,16 @@ class SelectOracleController extends Controller
 
         $_SESSION['query'] = $querySelect;
 
-//        $_SESSION['database'] = 'postgre';
-//        dd($querySelect);
+        try {
+            $result = DataTables::of(DB::connection($_SESSION['connection'])->select($querySelect))->make(true);
+        }
+        catch(QueryException $e){
+            $status = 'error';
+            $title = 'Query Error!';
+            $message = $e->getMessage();
+
+            return compact(['status','title','message']);
+        }
 
         if($column[0]['data'] == '*'){
             if($_SESSION['database'] == 'postgre'){
@@ -378,7 +345,15 @@ class SelectOracleController extends Controller
                         ORDER BY column_id";
             }
 
-            $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
+            try {
+                $columnlist = DB::connection($_SESSION['connection'])->SELECT(DB::RAW($query));
+            }
+            catch (QueryException $e){
+                $status = 'error';
+                $title = $e->getMessage();
+
+                return compact(['status','title']);
+            }
 
             $column = [];
 
@@ -390,8 +365,8 @@ class SelectOracleController extends Controller
 
             if(count($column) == 0){
                 $status = 'error';
-                $message = 'Tabel tidak ditemukan!';
-                return compact(['status','message']);
+                $title = 'Tabel tidak ditemukan!';
+                return compact(['status','title']);
             }
 
             return $column;

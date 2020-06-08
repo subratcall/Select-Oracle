@@ -951,7 +951,8 @@
                             success: function (response) {
                                 if(response.status == 'error'){
                                     swal({
-                                        title: response.message,
+                                        title: response.title,
+                                        text: response.message,
                                         icon: response.status
                                     }).then(function(ok){
                                         if($('#modal-loader').is(':visible'))
