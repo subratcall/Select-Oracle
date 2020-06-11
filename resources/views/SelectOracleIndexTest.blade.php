@@ -511,10 +511,13 @@
 
                             column.push(response[i].column_name);
                         }
-                        $('.tanggal').datepicker({
-                            "dateFormat" : "dd/mm/yy"
+                        // $('.tanggal').datepicker({
+                        //     "dateFormat" : "dd/mm/yy"
+                        // });
+                        $('.tanggal').datetimepicker({
+                            format:'d/m/Y H:i',
                         });
-                        $('.tanggal').attr('placeholder','DD/MM/YYYY');
+                        $('.tanggal').attr('placeholder','DD/MM/YYYY HH24:MI');
 
                         // $('.select').selectize();
                         // $('.where').selectize();
@@ -535,22 +538,27 @@
                 $(event.target).parent().parent().find('.operator').val('=');
                 $(event.target).parent().parent().find('.operator').select();
                 $(event.target).parent().parent().find('.value').prop('disabled',false);
-                $('.value').each(function(){
-                    if($(this).hasClass('hasDatepicker')){
-                        $(this).datepicker('destroy');
-                        $(this).removeClass('hasDatepicker');
-                    }
-                })
+                // $('.value').each(function(){
+                //     if($(this).hasClass('hasDatepicker')){
+                //         $(this).datepicker('destroy');
+                //         $(this).removeClass('hasDatepicker');
+                //     }
+                // })
+                $('.value').datetimepicker('destroy');
                 for(i=0;i<arrColumn.length;i++){
                     if(toLower(arrColumn[i]['column_name']) == toLower($(event.target).val())){
                         if(toLower(arrColumn[i]['data_type']) == 'timestamp without time zone' || toLower(arrColumn[i]['data_type']) =='date'){
-                            $(event.target).parent().parent().find('.value').datepicker({
-                                "dateFormat" : "dd/mm/yy"
+                            // $(event.target).parent().parent().find('.value').datepicker({
+                            //     "dateFormat" : "dd/mm/yy"
+                            // });
+                            $(event.target).parent().parent().find('.value').datetimepicker({
+                                format:'d/m/Y H:i',
                             });
-                            $(event.target).parent().parent().find('.value').attr('placeholder','DD/MM/YYYY');
+                            $(event.target).parent().parent().find('.value').attr('placeholder','DD/MM/YYYY HH24:MI');
                         }
                         else{
-                            $(event.target).parent().parent().find('.value').datepicker('destroy');
+                            // $(event.target).parent().parent().find('.value').datepicker('destroy');
+                            $(event.target).parent().parent().find('.value').datetimepicker('destroy');
                             $(event.target).parent().parent().find('.value').attr('placeholder','');
                         }
 
@@ -892,7 +900,10 @@
 
                             $('.update-row').each(function(){
                                 if($(this).find('.update').val() != '' && $(this).find('.value').val() != ''){
-                                    query += $(this).find('.update').val() + " = '" + $(this).find('.value').val().toUpperCase() + "', ";
+                                    if($(this).find('.value').val().toUpperCase() == 'NULL'){
+                                        query += $(this).find('.update').val() + " = null, ";
+                                    }
+                                    else query += $(this).find('.update').val() + " = '" + $(this).find('.value').val().toUpperCase() + "', ";
                                 }
                             });
                             query = query.slice(0,-2);

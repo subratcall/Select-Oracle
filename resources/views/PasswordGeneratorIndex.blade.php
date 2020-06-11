@@ -170,6 +170,7 @@
             $('#jam').val(jam);
 
             $('#tanggal').datepicker({
+                singleDatePicker: true,
                 dateFormat : "dd/mm/yy",
                 minDate : new Date()
             });
@@ -184,7 +185,19 @@
                     generate();
                 }
             });
+
+            checkLoginStatus();
         });
+
+        function checkLoginStatus(hour) {
+            window.setInterval(function(){
+                date = new Date();
+
+                if(jam != date.getHours()){
+                    location.replace('{{ url('/password-generator/logout') }}');
+                }
+            }, 1000);
+        }
 
         // $("#jam").on('change',function(){
         //     if($('#tanggal').val() == now && $('#jam').val() < jam){

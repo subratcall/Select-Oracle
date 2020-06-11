@@ -251,7 +251,15 @@ class SelectOracleController extends Controller
             $status = 'success';
 
             if($result > 0){
-                $message = 'Ada data yang terupdate!';
+                if(strtolower($tipe) == 'insert'){
+                    $message = 'Ada '.$result.' data yang terinput!';
+                }
+                else if(strtolower($tipe) == 'update'){
+                    $message = 'Ada '.$result.' data yang terupdate!';
+                }
+                else if(strtolower($tipe) == 'delete'){
+                    $message = 'Ada '.$result.' data yang terhapus!';
+                }
             }
             else $message = 'Tidak ada data yang terupdate!';
 

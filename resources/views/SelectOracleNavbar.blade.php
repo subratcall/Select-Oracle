@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset('/css/jquery-ui.css') }}">
 
     <link rel="stylesheet" href="{{ asset('/selectize/selectize.bootstrap3.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('/css/jquery.datetimepicker.css') }}" />
 
 
     {{-- JS --}}
@@ -31,6 +32,7 @@
     <script src={{asset('/js/script.js')}}></script>
 
     <script src="{{ asset('/selectize/selectize.min.js') }}"></script>
+    <script src="{{ asset('/js/jquery.datetimepicker.full.min.js') }}"></script>
 
     <title>Select Oracle</title>
 
