@@ -842,6 +842,8 @@
                                 }
                             });
 
+                            query += where;
+
                             $('.group-row').each(function(){
                                 if($(this).find('.group').val() != null) {
                                     if($(this).find('.group').val() != '*'){

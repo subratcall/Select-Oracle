@@ -272,6 +272,10 @@ class SelectOracleController extends Controller
 
         $querySelect = $request['query'];
 
+        if($querySelect[strlen($querySelect) - 1] == ';'){
+            $querySelect = substr($querySelect, 0, strlen($querySelect)-1);
+        }
+
         $array = str_replace(',', '',explode(' ',$string = trim(preg_replace('/\s+/', ' ', $querySelect))));
 
         $table = '';
