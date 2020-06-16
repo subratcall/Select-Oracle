@@ -87,11 +87,17 @@
                                                                 <option value="" selected disabled>- Pilih Tabel terlebih dahulu -</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm-4">
+                                                        <div class="col-sm-3 pr-0">
                                                             <input class="form form-control value" type="text" disabled>
                                                         </div>
                                                         <div class="col-sm-1">
-                                                            <button class="col-sm-10 btn btn-info" onclick="tambah_update()">+</button>
+                                                            <div class="custom-control custom-checkbox mt-2 ml-1 text-left">
+                                                                <input type="checkbox" class="custom-control-input cb_null" id="cb_update_0" onclick="make_null(event)" disabled>
+                                                                <label class="custom-control-label" for="cb_update_0">NULL</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-1 pl-0 pr-0 text-center">
+                                                            <button class="col-sm-8 ml-2 btn btn-info" onclick="tambah_update()">+</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -115,11 +121,17 @@
                                                                 <option value="IN">IN</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm-3">
+                                                        <div class="col-sm-2 pl-0 pr-0">
                                                             <input class="form form-control value" type="text" disabled>
                                                         </div>
                                                         <div class="col-sm-1">
-                                                            <button class="col-sm-10 btn btn-info" onclick="tambah_where()">+</button>
+                                                            <div class="custom-control custom-checkbox mt-2 ml-1 text-left">
+                                                                <input type="checkbox" class="custom-control-input cb_null" id="cb_where_0" onclick="make_null(event)" disabled>
+                                                                <label class="custom-control-label" for="cb_where_0">NULL</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-1 pl-0 pr-0 text-center">
+                                                            <button class="col-sm-8 ml-2 btn btn-info" onclick="tambah_where()">+</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -276,11 +288,6 @@
             const hour = currentTime.getHours();
 
             checkLoginStatus(hour);
-            // $('#where').show();
-
-            // $('#query-manual').val('select * from table_big_data');
-            // $('#btn-select-manual').click();
-            // $('#btn-execute').click();
         });
 
         function checkLoginStatus(hour) {
@@ -302,9 +309,13 @@
         column = [];
         oldLength = '';
 
+        row_update = 1;
+        row_where = 1;
+
         function refreshTime() {
             tanggal = $('#header-tanggal').html().substr(0, $('#header-tanggal').html().length - 8);
             time = $('#header-tanggal').html().substr(-8);
+
             time = time.split(':');
             h = parseInt(time[0]);
             m = parseInt(time[1]);
@@ -328,6 +339,8 @@
 
             if(m < 10 && m != '00')
                 m = '0' + m;
+            if(m == '0')
+                m = '00'
 
             $('#header-tanggal').html(tanggal + h + ':' + m + ':' + s);
         }
@@ -538,6 +551,7 @@
                 $(event.target).parent().parent().find('.operator').val('=');
                 $(event.target).parent().parent().find('.operator').select();
                 $(event.target).parent().parent().find('.value').prop('disabled',false);
+                $(event.target).parent().parent().find('.cb_null').prop('disabled',false);
                 // $('.value').each(function(){
                 //     if($(this).hasClass('hasDatepicker')){
                 //         $(this).datepicker('destroy');
@@ -573,6 +587,7 @@
                 $(event.target).parent().parent().find('.operator').val('');
                 $(event.target).parent().parent().find('.value').prop('disabled',true);
                 $(event.target).parent().parent().find('.value').val('');
+                $(event.target).parent().parent().find('.cb_null').prop('disabled',true);
             }
         }
 
@@ -632,15 +647,22 @@
                 '<option value="IN">IN</option>' +
                 '</select>' +
                 '</div>' +
-                '<div class="col-sm-3">' +
+                '<div class="col-sm-2 pl-0 pr-0">' +
                 '<input class="form form-control value" type="text" disabled>' +
                 '</div>' +
                 '<div class="col-sm-1">' +
-                '<button class="col-sm-10 btn btn-danger" onclick="delete_row(event)">X</button>' +
+                '<div class="custom-control custom-checkbox mt-2 ml-1 text-left">' +
+                '<input type="checkbox" class="custom-control-input cb_null" id="cb_where_'+row_where+'" onclick="make_null(event)" disabled>' +
+                '<label class="custom-control-label" for="cb_where_'+row_where+'">NULL</label>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-sm-1 pl-0 pr-0 text-center">' +
+                '<button class="col-sm-8 ml-2 btn btn-danger" onclick="delete_row(event)">X</button>' +
                 '</div>' +
                 '</div>';
 
             $('#where').append(html);
+            row_where++;
 
             selectizing();
         }
@@ -710,15 +732,23 @@
 
             html += '</select>' +
                 '</div>' +
-                '<div class="col-sm-4">' +
+                '<div class="col-sm-3 pr-0">' +
                 '<input class="form form-control value" type="text" disabled>' +
                 '</div>' +
                 '<div class="col-sm-1">' +
-                '<button class="col-sm-10 btn btn-danger" onclick="delete_row(event)">X</button>' +
+                '<div class="custom-control custom-checkbox mt-2 ml-1 text-left">' +
+                '<input type="checkbox" class="custom-control-input cb_null" id="cb_update_'+row_update+'" onclick="make_null(event)" disabled>' +
+                '<label class="custom-control-label" for="cb_update_'+row_update+'">NULL</label>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-sm-1 pl-0 pr-0 text-center">' +
+                '<button class="col-sm-8 ml-2 btn btn-danger" onclick="delete_row(event)">X</button>' +
+                '</div>' +
                 '</div>' +
                 '</div>';
 
             $('#update').append(html);
+            row_update++;
 
             selectizing();
         }
@@ -744,6 +774,19 @@
             }
         }
 
+        function make_null(event){
+            if($(event.target).is(':checked')){
+                $(event.target).parent().parent().parent().find('.value').val('NULL');
+                $(event.target).parent().parent().parent().find('.value').prop('disabled',true);
+                $(event.target).parent().parent().parent().find('.operator').prop('disabled',true);
+            }
+            else{
+                $(event.target).parent().parent().parent().find('.value').val('');
+                $(event.target).parent().parent().parent().find('.value').prop('disabled',false);
+                $(event.target).parent().parent().parent().find('.operator').prop('disabled',false);
+            }
+        }
+
         function delete_row(event){
             $(event.target).parent().parent().remove();
         }
@@ -760,6 +803,8 @@
             $('#order').hide();
 
             $('.row-tambahan').remove();
+            $('.cb_null').prop('checked',false);
+            $('.cb_null').prop('disabled',true);
 
             var $select = $('#tabel').selectize();
             var control = $select[0].selectize;
@@ -831,20 +876,28 @@
                             $('.where-row').each(function(){
                                 if($(this).find('.where').val() != null && $(this).find('.where').val() != '*'){
                                     if(where == ''){
-                                        if('{{ $_SESSION['database'] }}' == 'oracle') {
-                                            if ($(this).find('.operator').val() != 'IN')
-                                                where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
-                                            else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        {{--if('{{ $_SESSION['database'] }}' == 'oracle') {--}}
+                                        {{--    if ($(this).find('.operator').val() != 'IN')--}}
+                                        {{--        where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";--}}
+                                        {{--    else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";--}}
+                                        {{--}--}}
+                                        {{--else{--}}
+                                        if ($(this).find('.operator').val() != 'IN'){
+                                            if($(this).find('.value').val().toUpperCase() == 'NULL') {
+                                                where = ' WHERE ' + $(this).find('.where').val() + " is null";
+                                            }
+                                            else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
                                         }
-                                        else{
-                                            if ($(this).find('.operator').val() != 'IN')
-                                                where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
-                                            else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
-                                        }
+                                        else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        // }
                                     }
                                     else{
-                                        if($(this).find('.operator').val() != 'IN')
-                                            where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
+                                        if($(this).find('.operator').val() != 'IN'){
+                                            if($(this).find('.value').val().toUpperCase() == 'NULL') {
+                                                where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " is null";
+                                            }
+                                            else where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
+                                        }
                                         else where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
                                     }
                                 }
@@ -915,7 +968,10 @@
                                     if(where != ' WHERE '){
                                         where += " " + $(this).find('.condition').val() + " ";
                                     }
-                                    where += $(this).find('.where').val() + ' ' + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                    if($(this).find('.value').val().toUpperCase() == 'NULL') {
+                                        where += $(this).find('.where').val() + ' ' + "is null";
+                                    }
+                                    else where += $(this).find('.where').val() + ' ' + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
                                 }
                             })
 
