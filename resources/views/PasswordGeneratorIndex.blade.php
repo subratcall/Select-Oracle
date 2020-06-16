@@ -220,7 +220,7 @@
             bulan = date[1];
             tahun = date[2];
 
-            if(nvl($('#cabang').val(),'XXX') != 'XXX' && nvl($('#jam').val(), 'XXX') != 'XXX' && nvl($('#user').val(),'XXX') != 'XXX' && nvl($('#cabang').val(),'XXX') != 'XXX'){
+            if(nvl($('#cabang').val(),'XXX') != 'XXX' && nvl($('#jam').val(), 'XXX') != 'XXX' && nvl($('#user').val(),'XXX') != 'XXX' && nvl($('#cabang').val(),'XXX') != 'XXX' && nvl($('#keterangan').val(), 'XXX') != 'XXX'){
                 $.ajax({
                     url: '{{ url('password-generator/generate') }}',
                     type: 'POST',
