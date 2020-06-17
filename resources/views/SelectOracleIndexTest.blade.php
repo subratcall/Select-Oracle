@@ -342,6 +342,9 @@
             if(m == '0')
                 m = '00'
 
+            if(h < 10)
+                h = ' 0' + h;
+
             $('#header-tanggal').html(tanggal + h + ':' + m + ':' + s);
         }
 
