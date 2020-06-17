@@ -172,12 +172,11 @@ class PasswordGeneratorController extends Controller
 
                 return compact(['status','title','message']);
             }
-            finally{
-                $status = 'success';
-                $title = 'OTP berhasil digenerate!';
 
-                return compact(['status','title','pass']);
-            }
+            $status = 'success';
+            $title = 'OTP berhasil digenerate!';
+
+            return compact(['status','title','pass']);
         }
         else{
             $status = 'success';
