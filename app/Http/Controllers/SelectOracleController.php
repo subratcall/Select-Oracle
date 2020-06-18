@@ -308,32 +308,34 @@ class SelectOracleController extends Controller
                 $c['class'] = 'nowrap text-left';
                 array_push($column,$c);
             }
-            if(strtolower($array[$i]) == 'where')
-                $where = true;
-            if(strtolower($array[$i]) == 'limit' || strtolower($array[$i]) == 'rownum')
-                $limit = true;
+//            if(strtolower($array[$i]) == 'where')
+//                $where = true;
+//            if(strtolower($array[$i]) == 'limit' || strtolower($array[$i]) == 'rownum')
+//                $limit = true;
         }
 
-        if($where){
-            if(!$limit){
-                if($_SESSION['database'] == 'oracle')
-                    $querySelect .= ' AND ROWNUM <= 100';
-                else{
-                    $querySelect .= ' LIMIT 100';
-                }
-            }
-        }
-        else{
-            if(!$limit){
-                if($_SESSION['database'] == 'oracle')
-                    $querySelect .= ' WHERE ROWNUM <= 100';
-                else{
-                    $querySelect .= ' LIMIT 100';
-                }
-            }
-        }
+//        if($where){
+//            if(!$limit){
+//                if($_SESSION['database'] == 'oracle')
+//                    $querySelect .= ' AND ROWNUM <= 100';
+//                else{
+//                    $querySelect .= ' LIMIT 100';
+//                }
+//            }
+//        }
+//        else{
+//            if(!$limit){
+//                if($_SESSION['database'] == 'oracle')
+//                    $querySelect .= ' WHERE ROWNUM <= 100';
+//                else{
+//                    $querySelect .= ' LIMIT 100';
+//                }
+//            }
+//        }
 
         $_SESSION['query'] = $querySelect;
+
+//        dd($querySelect)
 
         try {
             $result = DataTables::of(DB::connection($_SESSION['connection'])->select($querySelect))->make(true);

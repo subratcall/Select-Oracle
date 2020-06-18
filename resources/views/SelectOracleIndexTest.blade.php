@@ -119,6 +119,8 @@
                                                                 <option value="<>"><></option>
                                                                 <option value="LIKE">LIKE</option>
                                                                 <option value="IN">IN</option>
+                                                                <option value="IS">IS</option>
+                                                                <option value="IS NOT">IS NOT</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-2 pl-0 pr-0">
@@ -561,7 +563,7 @@
                 //         $(this).removeClass('hasDatepicker');
                 //     }
                 // })
-                $('.value').datetimepicker('destroy');
+                $(event.target).parent().parent().find('.value').datetimepicker('destroy');
                 for(i=0;i<arrColumn.length;i++){
                     if(toLower(arrColumn[i]['column_name']) == toLower($(event.target).val())){
                         if(toLower(arrColumn[i]['data_type']) == 'timestamp without time zone' || toLower(arrColumn[i]['data_type']) =='date'){
@@ -583,15 +585,17 @@
                         break;
                     }
                 }
-                $(event.target).parent().parent().find('.value').val('');
             }
             else{
                 $(event.target).parent().parent().find('.operator').prop('disabled',true);
                 $(event.target).parent().parent().find('.operator').val('');
                 $(event.target).parent().parent().find('.value').prop('disabled',true);
-                $(event.target).parent().parent().find('.value').val('');
                 $(event.target).parent().parent().find('.cb_null').prop('disabled',true);
+                $(event.target).parent().parent().find('.value').prop('placeholder','');
             }
+
+            $(event.target).parent().parent().find('.value').val('');
+            $(event.target).parent().parent().find('.cb_null').prop('checked',false);
         }
 
         function tambah_select(){
@@ -648,6 +652,8 @@
                 '<option value="<>"><></option>' +
                 '<option value="LIKE">LIKE</option>' +
                 '<option value="IN">IN</option>' +
+                '<option value="IS">IS</option>' +
+                '<option value="IS NOT">IS NOT</option>' +
                 '</select>' +
                 '</div>' +
                 '<div class="col-sm-2 pl-0 pr-0">' +
@@ -770,7 +776,8 @@
                 $(event.target).parent().parent().find('.value').prop('maxlength','999');
             }
             else{
-                $(event.target).parent().parent().find('.value').attr('placeholder',"");
+                if($(event.target).parent().parent().find('.value').attr('placeholder') != 'DD/MM/YYYY HH24:MI')
+                    $(event.target).parent().parent().find('.value').attr('placeholder',"");
 
                 if($(event.target).parent().parent().find('.value').prop('maxlength') == 999)
                     $(event.target).parent().parent().find('.value').prop('maxlength',oldLength);
@@ -781,12 +788,12 @@
             if($(event.target).is(':checked')){
                 $(event.target).parent().parent().parent().find('.value').val('NULL');
                 $(event.target).parent().parent().parent().find('.value').prop('disabled',true);
-                $(event.target).parent().parent().parent().find('.operator').prop('disabled',true);
+                // $(event.target).parent().parent().parent().find('.operator').prop('disabled',true);
             }
             else{
                 $(event.target).parent().parent().parent().find('.value').val('');
                 $(event.target).parent().parent().parent().find('.value').prop('disabled',false);
-                $(event.target).parent().parent().parent().find('.operator').prop('disabled',false);
+                // $(event.target).parent().parent().parent().find('.operator').prop('disabled',false);
             }
         }
 
@@ -879,34 +886,45 @@
                             $('.where-row').each(function(){
                                 if($(this).find('.where').val() != null && $(this).find('.where').val() != '*'){
                                     if(where == ''){
-                                        {{--if('{{ $_SESSION['database'] }}' == 'oracle') {--}}
-                                        {{--    if ($(this).find('.operator').val() != 'IN')--}}
-                                        {{--        where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";--}}
-                                        {{--    else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";--}}
-                                        {{--}--}}
-                                        {{--else{--}}
                                         if ($(this).find('.operator').val() != 'IN'){
                                             if($(this).find('.value').val().toUpperCase() == 'NULL') {
-                                                where = ' WHERE ' + $(this).find('.where').val() + " is null";
+                                                where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " null";
                                             }
-                                            else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                            else{
+                                                console.log('x');
+                                                if(toLower(arrColumn[$.inArray($(this).find('.where').val(),column)].data_type) == 'date' || toLower(arrColumn[$.inArray($(this).find('.where').val(),column)].data_type) == 'timestamp without time zone'){
+                                                    if($(this).find('.value').val().length == 10)
+                                                        where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " to_date('" + $(this).find('.value').val() + "','DD/MM/YYYY')";
+                                                    else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " to_date('" + $(this).find('.value').val() + "','DD/MM/YYYY HH24:MI')";
+                                                }
+                                                else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                            }
                                         }
-                                        else where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
-                                        // }
+                                        else{
+                                            where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        }
                                     }
                                     else{
                                         if($(this).find('.operator').val() != 'IN'){
                                             if($(this).find('.value').val().toUpperCase() == 'NULL') {
-                                                where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " is null";
+                                                where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " null";
                                             }
                                             else where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
                                         }
-                                        else where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        else{
+                                            where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
+                                        }
                                     }
                                 }
                             });
 
                             query += where;
+
+                            if('{{ $_SESSION['database'] }}' == 'oracle'){
+                                if(where == '')
+                                    query += ' WHERE ROWNUM <= 100';
+                                else query += ' AND ROWNUM <= 100';
+                            }
 
                             $('.group-row').each(function(){
                                 if($(this).find('.group').val() != null) {
@@ -937,6 +955,10 @@
                             });
 
                             query += order;
+
+                            if('{{ $_SESSION['database'] }}' == 'postgre'){
+                                query += ' LIMIT 100';
+                            }
                         }
                         else if(tipe == 'insert'){
                             query = 'INSERT INTO ' + $('#tabel').val() + '(';
@@ -977,8 +999,6 @@
                                     else where += $(this).find('.where').val() + ' ' + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
                                 }
                             })
-
-                            query += where;
                         }
                         else if(tipe == 'delete'){
                             query = 'DELETE FROM ' + $('#tabel').val();
