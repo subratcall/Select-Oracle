@@ -891,7 +891,6 @@
                                                 where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " null";
                                             }
                                             else{
-                                                console.log('x');
                                                 if(toLower(arrColumn[$.inArray($(this).find('.where').val(),column)].data_type) == 'date' || toLower(arrColumn[$.inArray($(this).find('.where').val(),column)].data_type) == 'timestamp without time zone'){
                                                     if($(this).find('.value').val().length == 10)
                                                         where = ' WHERE ' + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " to_date('" + $(this).find('.value').val() + "','DD/MM/YYYY')";
@@ -909,7 +908,16 @@
                                             if($(this).find('.value').val().toUpperCase() == 'NULL') {
                                                 where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " null";
                                             }
-                                            else where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
+                                            else{
+                                                if(toLower(arrColumn[$.inArray($(this).find('.where').val(),column)].data_type) == 'date' || toLower(arrColumn[$.inArray($(this).find('.where').val(),column)].data_type) == 'timestamp without time zone'){
+                                                    if($(this).find('.value').val().length == 10)
+                                                        where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " to_date('" + $(this).find('.value').val() + "','DD/MM/YYYY')";
+                                                    else where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " to_date('" + $(this).find('.value').val() + "','DD/MM/YYYY HH24:MI')";
+                                                }
+                                                else where += " " + $(this).find('.condition').val() + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+
+                                                // where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
+                                            }
                                         }
                                         else{
                                             where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " " + $(this).find('.value').val() + " ";
