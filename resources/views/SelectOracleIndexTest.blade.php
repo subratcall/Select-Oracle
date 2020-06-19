@@ -914,7 +914,7 @@
                                                         where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " to_date('" + $(this).find('.value').val() + "','DD/MM/YYYY')";
                                                     else where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " to_date('" + $(this).find('.value').val() + "','DD/MM/YYYY HH24:MI')";
                                                 }
-                                                else where += " " + $(this).find('.condition').val() + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
+                                                else where += " " + $(this).find('.condition').val() + " g" + $(this).find('.where').val() + " " + $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "'";
 
                                                 // where += " " + $(this).find('.condition').val() + " " + $(this).find('.where').val() + " " +  $(this).find('.operator').val() + " '" + $(this).find('.value').val() + "' ";
                                             }
