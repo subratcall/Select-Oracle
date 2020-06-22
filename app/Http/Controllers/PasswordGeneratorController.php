@@ -20,9 +20,6 @@ class PasswordGeneratorController extends Controller
         $username = $request->username;
         $password = $request->password;
 
-
-        $_SESSION['database'] = $database;
-
         if($database == 'postgre'){
             if($username == 'ABC' && $password == '123'){
                 $_SESSION['login'] = true;
@@ -31,6 +28,7 @@ class PasswordGeneratorController extends Controller
                 $_SESSION['password'] = $password;
                 $_SESSION['connection'] = 'semarang';
                 $_SESSION['status'] = 'generator';
+                $_SESSION['database'] = 'postgre';
 
                 return 'success';
             }
@@ -49,6 +47,26 @@ class PasswordGeneratorController extends Controller
                 $_SESSION['password'] = $password;
                 $_SESSION['connection'] = 'simsmg';
                 $_SESSION['status'] = 'generator';
+                $_SESSION['database'] = 'oracle';
+
+                return 'success';
+            }
+            else{
+                $status = 'failed';
+                $message = 'Username atau password salah!';
+
+                return compact(['status','message']);
+            }
+        }
+        else if($database == 'postgre-ho'){
+            if($username == 'ABC' && $password == '123'){
+                $_SESSION['login'] = true;
+                $_SESSION['kodeigr'] = '22';
+                $_SESSION['user'] = $username;
+                $_SESSION['password'] = $password;
+                $_SESSION['connection'] = 'dbSupport';
+                $_SESSION['status'] = 'generator';
+                $_SESSION['database'] = 'postgre';
 
                 return 'success';
             }

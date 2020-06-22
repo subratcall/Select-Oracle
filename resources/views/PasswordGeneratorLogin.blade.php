@@ -53,8 +53,9 @@
             <span class="txt1 p-b-11">Database</span>
             <div class="wrap-input100 validate-input ">
                 <select class="input100" id="database" data-validate="user" style="text-transform: uppercase;" required>
-                    <option value="postgre">POSTGRE</option>
+                    <option value="postgre-ho">POSTGRE - HO</option>
                     <option value="oracle">ORACLE</option>
+                    <option value="postgre">POSTGRE - LEO</option>
                 </select>
                 <span class="focus-input100"></span>
             </div>
